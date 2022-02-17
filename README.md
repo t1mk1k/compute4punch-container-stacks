@@ -2,6 +2,27 @@
 
 Contains all containers used on the compute4punch infrastructure
 
+# Single GitLab project holding multiple images
+
+```
+docker login gitlab-p4n.aip.de:5005 -u username -p XXXXXX_YOUR_PROJECT_REGISTRY_TOKEN
+docker pull matterminers/htcondor-wn:latest
+```
+Using:  **docker image ls** find the local image **"IMAGE ID"** 
+```
+docker tag  0b21558452cf   gitlab-p4n.aip.de:5005/compute4punch/container-stacks/matterminers/htcondor-wn:latest
+docker push   gitlab-p4n.aip.de:5005/compute4punch/container-stacks/matterminers/htcondor-wn:latest
+```
+
+use the image on another computer:
+
+```
+docker login gitlab-p4n.aip.de:5005 -u username -p XXXXXX_YOUR_PROJECT_REGISTRY_TOKEN
+docker pull gitlab-p4n.aip.de:5005/compute4punch/container-stacks/matterminers/htcondor-wn:latest
+docker run -it gitlab-p4n.aip.de:5005/compute4punch/container-stacks/matterminers/htcondor-wn:latest
+```
+
+
 # Test  workflow
 
 ```
