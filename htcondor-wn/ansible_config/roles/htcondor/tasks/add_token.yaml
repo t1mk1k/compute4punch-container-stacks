@@ -1,0 +1,11 @@
+- name: Add tokens to the directories
+  block:
+  - name: Add base64 encoded tokens to the directories
+    shell: |
+        echo '{{ item[0].value }}' | base64 --decode > {{ item[1] + item[0].key }} && chmod 0600 {{ item[1] + item[0].key }}
+  rescue:
+  - name: Add tokens directly to the direcories
+    copy:
+        dest: "{{ item[1] + item[0].key }}"
+        content: "{{ item[0].value }}"
+        mode: "0600"
