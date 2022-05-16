@@ -171,6 +171,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         casacore-tools \
+        gcc \
+        git \
         libatkmm-1.6-1v5 \
         libboost-date-time1.71.0 \
         libboost-filesystem1.71.0 \
@@ -198,6 +200,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         libpangomm-1.4-1v5 \
         libpng16-16 \
         libpython3.8 \
+        libpython3-dev \
         libsigc++-2.0-0v5 \
         libstdc++6 \
         nodejs \
