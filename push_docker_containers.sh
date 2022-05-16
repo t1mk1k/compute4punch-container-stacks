@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 CONTAINERS=$(ls */[Dd]ockerfile)
 DATE=$(date +%Y%m%d)
