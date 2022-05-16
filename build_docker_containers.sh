@@ -5,7 +5,7 @@ CONTAINERS=$(ls */[Dd]ockerfile)
 
 for CONTAINER in $CONTAINERS; do
   CONTAINER_NAME=${CONTAINER/\/[Dd]ockerfile/}
-  docker pull $CI_REGISTRY_IMAGE/$CONTAINER_NAME:latest
+  docker pull $CI_REGISTRY_IMAGE/$CONTAINER_NAME:latest || true
   docker build \
       --pull \
       --cache-from $CI_REGISTRY_IMAGE/$CONTAINER_NAME:latest \
