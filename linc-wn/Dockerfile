@@ -73,11 +73,10 @@ RUN git clone --branch ${IDG_VERSION} \
     make install -j`nproc`
 
 ARG AOFLAGGER_VERSION=master
-RUN git clone --branch ${AOFLAGGER_VERSION} \
+RUN git clone --depth 1 --branch ${AOFLAGGER_VERSION} \
         https://gitlab.com/aroffringa/aoflagger.git && \
     mkdir aoflagger/build && \
-    cd aoflagger && git fetch && git checkout bfb3978e734911457555ac244d255f4b4ce6df68 && \
-    cd build && \
+    cd aoflagger/build && \
     cmake .. -DPORTABLE=${PORTABLE} && \
     make install -j`nproc`
 
@@ -133,6 +132,15 @@ RUN python3 -m pip install --no-cache-dir --upgrade \
     cwl-runner \
     cwltool
 
+# Install current version of LINC. By adding this to the base image
+# we can speed up the build of the final image, because all of LINC's
+# dependencies will have been installed already and (probably) don't need to
+# be updated.
+ARG LINC_VERSION=master
+RUN git clone --depth 1 --branch ${LINC_VERSION} \
+        https://git.astron.nl/RD/LINC.git linc && \
+        python3 -m pip install --no-cache-dir --upgrade ./linc
+
 #---------------------------------------------------------------------------
 # The image will now be rebuilt without adding the sources, in order to
 # reduce the size of the image.
@@ -153,25 +161,24 @@ ARG LOFARBEAM_VERSION=master
 ARG EVERYBEAM_VERSION=master
 ARG DP3_VERSION=master
 ARG WSCLEAN_VERSION=master
-ARG PREFACTOR_VERSION=master
+ARG LINC_VERSION=master
 
 # Add version information to the metadata of the image
 LABEL \
-    nl.astron.prefactor.lofarstman.version=${LOFARSTMAN_VERSION} \
-    nl.astron.prefactor.dysco.version=${DYSCO_VERSION} \
-    nl.astron.prefactor.idg.version=${IDG_VERSION} \
-    nl.astron.prefactor.aoflagger.version=${AOFLAGGER_VERSION} \
-    nl.astron.prefactor.lofarbeam.version=${LOFARBEAM_VERSION} \
-    nl.astron.prefactor.everybeam.version=${EVERYBEAM_VERSION} \
-    nl.astron.prefactor.dp3.version=${DP3_VERSION} \
-    nl.astron.prefactor.wsclean.version=${WSCLEAN_VERSION}
+    nl.astron.linc.lofarstman.version=${LOFARSTMAN_VERSION} \
+    nl.astron.linc.dysco.version=${DYSCO_VERSION} \
+    nl.astron.linc.idg.version=${IDG_VERSION} \
+    nl.astron.linc.aoflagger.version=${AOFLAGGER_VERSION} \
+    nl.astron.linc.lofarbeam.version=${LOFARBEAM_VERSION} \
+    nl.astron.linc.everybeam.version=${EVERYBEAM_VERSION} \
+    nl.astron.linc.dp3.version=${DP3_VERSION} \
+    nl.astron.linc.wsclean.version=${WSCLEAN_VERSION}
 
 # Only install run-time required packages 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         casacore-tools \
-        gcc \
         git \
         libatkmm-1.6-1v5 \
         libboost-date-time1.71.0 \
@@ -200,7 +207,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         libpangomm-1.4-1v5 \
         libpng16-16 \
         libpython3.8 \
-        libpython3-dev \
         libsigc++-2.0-0v5 \
         libstdc++6 \
         nodejs \
@@ -219,16 +225,11 @@ RUN wget -q -O /WSRT_Measures.ztar \
     tar xfz /WSRT_Measures.ztar && \
     rm /WSRT_Measures.ztar
 
-ENV PREFACTOR_DATA_ROOT=/usr/local/share/prefactor \
+ENV LINC_DATA_ROOT=/usr/local/share/linc \
     PYTHONPATH=/usr/local/bin
 
-# Install Prefactor CWL
-# Install current version of Prefactor CWL. By adding this to the base image
-# we can speed up the build of the final image, because all of Prefactor's
-# dependencies will have been installed already and (probably) don't need to
-# be updated.
-ARG PREFACTOR_VERSION=master
-RUN git clone --depth 1 --branch ${PREFACTOR_VERSION} \
-        https://git.astron.nl/eosc/prefactor3-cwl.git /tmp/prefactor && \
-        python3 -m pip install --no-cache-dir --upgrade /tmp/prefactor && \
-        rm -rf /tmp/prefactor
+RUN git clone --depth 1 --branch ${LINC_VERSION} \
+        https://git.astron.nl/RD/LINC.git /tmp/linc && \
+        python3 -m pip install --no-cache-dir --upgrade /tmp/linc && \
+        rm -rf /tmp/linc
+
