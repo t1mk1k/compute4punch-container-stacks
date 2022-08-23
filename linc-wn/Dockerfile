@@ -132,6 +132,15 @@ RUN python3 -m pip install --no-cache-dir --upgrade \
     cwl-runner \
     cwltool
 
+# Install current version of LINC. By adding this to the base image
+# we can speed up the build of the final image, because all of LINC's
+# dependencies will have been installed already and (probably) don't need to
+# be updated.
+ARG LINC_VERSION=master
+RUN git clone --depth 1 --branch ${LINC_VERSION} \
+        https://git.astron.nl/RD/LINC.git linc && \
+        python3 -m pip install --no-cache-dir --upgrade ./linc
+
 #---------------------------------------------------------------------------
 # The image will now be rebuilt without adding the sources, in order to
 # reduce the size of the image.
@@ -152,6 +161,7 @@ ARG LOFARBEAM_VERSION=master
 ARG EVERYBEAM_VERSION=master
 ARG DP3_VERSION=master
 ARG WSCLEAN_VERSION=master
+ARG LINC_VERSION=master
 
 # Add version information to the metadata of the image
 LABEL \
@@ -169,6 +179,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         casacore-tools \
+        davfs2 \
+        git \
         libatkmm-1.6-1v5 \
         libboost-date-time1.71.0 \
         libboost-filesystem1.71.0 \
@@ -217,13 +229,13 @@ RUN wget -q -O /WSRT_Measures.ztar \
 ENV LINC_DATA_ROOT=/usr/local/share/linc \
     PYTHONPATH=/usr/local/bin
 
-# Install LINC
-# Install current version of LINC. By adding this to the base image
-# we can speed up the build of the final image, because all of LINC's
-# dependencies will have been installed already and (probably) don't need to
-# be updated.
-ARG LINC_VERSION=master
 RUN git clone --depth 1 --branch ${LINC_VERSION} \
         https://git.astron.nl/RD/LINC.git /tmp/linc && \
         python3 -m pip install --no-cache-dir --upgrade /tmp/linc && \
         rm -rf /tmp/linc
+
+# Mount dcache-demo
+RUN mkdir -pv /mnt && \
+    echo 'https://dcache-demo.desy.de:2443/punch/ /mnt/webdav/ davfs user' >> /etc/fstab && \
+    echo 'EXTRA_GROUPS="davfs"' >> /etc/adduser.conf && \
+    echo 'ADD_EXTRA_GROUPS=1' >> /etc/adduser.conf
