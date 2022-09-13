@@ -26,47 +26,42 @@ The Drell-Yan (Z/gamma^*) contribution is scaled to the data in the Z peak regio
 cross section. More details about the analysis can be found in the [CERN Open Data portal](http://opendata.cern.ch/record/5500) 
 and in the [HiggsExample20112012 repository](https://github.com/cms-opendata-analyses/HiggsExample20112012/).     
 
-# Instructions to run the analysis
+# Instructions to run the analysis locally
 
 1. Create the directory `H4leptons`:
 
 ```
 mkdir $HOME/H4leptons
 cd $HOME/H4leptons
-
 ```
 
 2. Clone the [gitlab repository](https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons/-/tree/main/h4leptons):
 
 ```
 git clone https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons.git
+```
+
+3. Dowload the indexfiles corresponding to the data sets and Monte Carlo for 2011 and 2012: 
 
 ```
-3. Dowload the indexfiles corresponding to the data sets and Monte Carlo used in the analysis: 
-
+cd container-stacks-h4leptons/h4leptons
+./Download-Indexfiles/dowload-data2011.sh
+./Download-Indexfiles/dowload-data2012.sh
+./Download-Indexfiles/dowload-moca2011.sh
+./Download-Indexfiles/dowload-moca2012.sh
 ```
-cd $HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Download-Indexfiles
-./dowload-data2011.sh
-./dowload-data2012.sh
-./dowload-moca2011.sh
-./dowload-moca2012.sh
 
-```
-After a successful download, the indexfiles can be found in the directory `$HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Indexfiles` where they
+After a successful download, the indexfiles can be found in the directory `Indexfiles` where they
 are classified according to the data sets and Monte Carlo for 2011 and 2012:
 
 ```
-ls $HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Indexfiles
-data2011 data2012 moca2011 moca2012
-
+ls Indexfiles
 ```
 
 4. Build the Docker image `h4leptons` based on the image `cmsopendata/cmssw_5_3_32-slc6_amd64_gcc472`:
 
 ```
-cd $HOME/H4leptons/container-stacks-h4leptons/h4leptons
 ./build-image.sh
-
 ```
 
 Check that the two images have been successfully build:
@@ -83,31 +78,42 @@ docker image ls
 
 to produce the output file for the indexfile `CMS_Run2011A_DoubleElectron_AOD_12Oct2013-v1_20000_file_index.txt`.
 
+Scripts are available in the directory `Submission` to run locally on all the indexfiles: 
 
-6. The output files can be found in the directory `$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Output` where they are classified 
+
+```
+./Submission/submit-data2011.sh
+./Submission/submit-data2012.sh
+./Submission/submit-moca2011.sh
+./Submission/submit-moca2012.sh
+```
+
+6. The output files can be found in the directory `Output` where they are classified 
 according to the data sets and Monte Carlo for 2011 and 2012:
 
 ```
-ls $HOME/H4leptons/container-stacks-h4leptons/h4leptons/Output
-data2011 data2012 moca2011 moca2012
+ls Output
 ```
 
-7. Once all the data sets and Monte Carlo files have been processed and the ouput retrieved in the directory `$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Output`,
-merge the samples with the script `MergeOutput.sh`:
+7. Once all the data sets and Monte Carlo files have been processed and the ouput retrieved in the directory `Output`, merge the samples with the script `MergeOutput.sh`:
 
 ```
-$HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Merger/MergeOutput.sh data2011
-$HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Merger/MergeOutput.sh data2012
-$HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Merger/MergeOutput.sh moca2011
-$HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Merger/MergeOutput.sh moca2012
+./Merger/MergeOutput.sh data2011
+./Merger/MergeOutput.sh data2012
+./Merger/MergeOutput.sh moca2011
+./Merger/MergeOutput.sh moca2012
 ```
 
-The merged output files can be found in the directory `$HOME/H4leptons/container-stacks-h4leptons/h4leptons/OutputMerged`.
+The merged output files can be found in the directory `OutputMerged`.
 
 8. Plot the four leptons invariant mass distribution:
 
 ```
-root -l $HOME/H4leptons/container-stacks-h4leptons/h4leptons/HiggsAnalysis/Plotter/M4Lepton.cc
+root -l Plotter/M4Lepton.cc
 ```
 
-The plot is saved in the directory `$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Result`.
+The plot is saved in the directory `Result`.
+
+```
+ls Result
+```
