@@ -4,7 +4,7 @@
 
 if [ $# != 1 ]
   then
-    echo "Supply the Indexfile to process or \"dev\" for interactive mode"
+    echo "Supply the indexfile to process or \"dev\" for interactive mode"
     exit
 fi
 
@@ -12,15 +12,22 @@ indexfile=$1
 
 WORKDIR=/home/cmsusr/CMSSW_5_3_32/src
 ANALYSIS=$WORKDIR/HiggsAnalysis
+HOSTDIR=$HOME/H4leptons/container-stacks-h4leptons/h4leptons
 
-output_host=$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Output
+output_host=$HOSTDIR/Output
 output_container=$WORKDIR/Output
+
+indexfile_host=$HOSTDIR/Indexfiles
+indexfile_container=$WORKDIR/Indexfiles
+
+output_mount="-v $output_host:$output_container"
+indexfile_mount="-v $indexfile_host:$indexfile_container"
 
 if [[ $1 == "dev" ]]
   then  
-    docker run -it  --rm  --name higgs-analysis -v $output_host:$output_container h4leptons:latest /bin/bash
+    docker run -it  --rm  --name higgs-analysis $output_mount $indexfile_mount h4leptons:latest /bin/bash
   else
-    docker run -it  --rm  --name higgs-analysis-$indexfile -v $output_host:$output_container h4leptons:latest /bin/bash -c "sh $ANALYSIS/analysis.sh $indexfile" 
+    docker run -it  --rm  --name higgs-analysis-$indexfile $output_mount $indexfile_mount h4leptons:latest /bin/bash -c "sh $ANALYSIS/analysis.sh $indexfile" 
 fi
 
 

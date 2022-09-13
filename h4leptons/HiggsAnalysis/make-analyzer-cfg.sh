@@ -7,8 +7,9 @@ if [ $# != 1 ]
 fi
 
 WORKDIR=/home/cmsusr/CMSSW_5_3_32/src
+INDEXPATH=$WORKDIR/Indexfiles
 ANALYSIS=$WORKDIR/HiggsAnalysis 
-INDEXPATH=$ANALYSIS/Indexfiles
+
 
 indexfile=$1
 

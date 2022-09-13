@@ -1,0 +1,43 @@
+# specify debugging true to process a single index file
+# specify sample to process: data2011, data2012, moca2011, moca2012
+
+#-- create Indexfiles-HTCondor (outside of HiggsAnalysis)
+#-- delete Indexfiles-HTCondor
+#-- split indexfiles
+
+#-- transfer indexfile (as now outside of HiggsAnalysis): done
+#-- specify flavor: done
+#-- create output directories at desy: done
+
+#-- transfer oidc-token
+#-- transfer outputfile to desy
+
+executable = /home/cmsusr/CMSSW_5_3_32/src/HiggsAnalysis/analysis.sh
+arguments = $Fn(INDEXFILE).txt
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+transfer_input_files = $(INDEXFILE), token.txt
+transfer_output_files = $Fn(INDEXFILE).root
+
+if $(test)
+  slice = [:1]
+endif
+
+output = logs/$(sample)/$Fn(INDEXFILE).out
+error = logs/$(sample)/$Fn(INDEXFILE).err
+log = logs/$(sample)/analysis.log
+
+Request_cpus = 8
+Request_memory = 20 GB
+
++SINGULARITY_JOB_CONTAINER = "h4leptons:latest"
+
+queue INDEXFILE matching files $(slice) /home/cmsusr/CMSSW_5_3_32/src/HiggsAnalysis/Indexfiles-HTCondor/$(sample)/*_file_index.txt
+
+davix-put -H "Authorization: Bearer ${TOKEN}" /bin/bash https://dcache-demo.desy.de:2443/punch/junkdir1/RemoveMe.file
+curl -L -X PUT -H "Authorization: Bearer ${TOKEN}" --upload-file /etc/services https://dcache-demo.desy.de:2443/punch/junkdir1/RemoveMe2.file
+
+
+
