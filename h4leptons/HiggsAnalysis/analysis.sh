@@ -1,17 +1,15 @@
 #!/bin/bash
 
-## https://opendata.cern.ch/record/5500
-
 if [ $# != 1 ]
   then
-    echo "Supply the Indexfile to process"
+    echo "Specify the indexfile to process"
     exit
 fi
 
 indexfile=$1
 
 CONTAINER=/home/cmsusr
-WORKDIR=/home/cmsusr/CMSSW_5_3_32/src
+WORKDIR=$CONTAINER/CMSSW_5_3_32/src
 ANALYSIS=$WORKDIR/HiggsAnalysis
 
 source $CONTAINER/.bashrc

@@ -2,14 +2,14 @@
 
 if [ $# != 1 ]
   then
-    echo "Supply the Indexfile to process"
+    echo "Specify the indexfile to process"
     exit
 fi
 
 WORKDIR=/home/cmsusr/CMSSW_5_3_32/src
 INDEXPATH=$WORKDIR/Indexfiles
 ANALYSIS=$WORKDIR/HiggsAnalysis 
-
+OUTPUTDIR=$WORKDIR/Output
 
 indexfile=$1
 
@@ -50,25 +50,15 @@ fi
 
 if [[ $indexfile == *Run2011A* ]] 
   then 
-    INDEXPATH+="/data2011"
     echo "goodrunlist = '$ANALYSIS/GoodRunList/Cert_160404-180252_7TeV_ReRecoNov08_Collisions11_JSON.txt'" >> $pythonfile
     echo "" >> $pythonfile
     echo "myLumis = LumiList.LumiList(filename = goodrunlist).getCMSSWString().split(',')" >> $pythonfile
 elif [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]
   then
-    INDEXPATH+="/data2012" 
     echo "goodrunlist = '$ANALYSIS/GoodRunList/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt'" >> $pythonfile
     echo "" >> $pythonfile
     echo "myLumis = LumiList.LumiList(filename = goodrunlist).getCMSSWString().split(',')" >> $pythonfile
 fi
-
-if [[ $indexfile == *MonteCarlo2011* ]]					 
-  then									 
-    INDEXPATH+="/moca2011"
-elif [[ $indexfile == *MonteCarlo2012* ]]				 
-  then									 
-    INDEXPATH+="/moca2012"
-fi                                                                       
 
 echo "" >> $pythonfile
 echo "## Input data or Montecarlo" >> $pythonfile
@@ -89,27 +79,11 @@ if [[ $indexfile == *Run2011A* ]] || [[ $indexfile == *Run2012B* ]] || [[ $index
     echo "process.source.lumisToProcess.extend(myLumis)" >> $pythonfile
 fi
 
-Outputdir="Output"
- 
-if [[ $indexfile == *Run2011A* ]]
-  then
-    Outputdir+="/data2011"
-elif [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]
-  then
-    Outputdir+="/data2012"
-elif [[ $indexfile == *MonteCarlo2011* ]]
-  then
-    Outputdir+="/moca2011"
-elif [[ $indexfile == *MonteCarlo2012* ]]
-  then
-    Outputdir+="/moca2012"
-fi
-
 echo "" >> $pythonfile
 echo "## Analyzer" >> $pythonfile
 echo "" >> $pythonfile 
 echo "process.higgsanalyzer = cms.EDAnalyzer('HiggsAnalyzer')" >> $pythonfile
 echo "" >> $pythonfile
-echo "process.TFileService = cms.Service(\"TFileService\", fileName = cms.string('$WORKDIR/$Outputdir/$outputfile'))" >> $pythonfile
+echo "process.TFileService = cms.Service(\"TFileService\", fileName = cms.string('$OUTPUTDIR/$outputfile'))" >> $pythonfile
 echo "" >> $pythonfile
 echo "process.p = cms.Path(process.higgsanalyzer)" >> $pythonfile

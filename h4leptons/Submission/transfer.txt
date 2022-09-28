@@ -1,0 +1,15 @@
+#--- transfer outputfiles without the need for credentials
+output_destination = https://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$(sample)
+transfer_output_remaps = "$Fn(INDEXFILE).root = https://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$(sample)/$Fn(INDEXFILE).root"
+
+#--- transfer outputfiles using a token from an OAuth service provider: requires condor-credmon-oauth 
+#--- condor-credmon-oauth requires python2-scitokens: solution would be to run the HTCondor submission in a Docker container
+use_oauth_services = TokenProvider
+output_destination = TokenProvider+https://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$(sample)
+transfer_output_remaps = "$Fn(INDEXFILE).root = TokenProvider+https://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$(sample)/$Fn(INDEXFILE).root"
+
+#--- custom file transfer plugin
+transfer_plugins = transferDESY=transfer-desy.py
+output_destination = transferDESY://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$(sample)
+transfer_output_remaps = "$Fn(INDEXFILE).root = transferDESY://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$(sample)/$Fn(INDEXFILE).root"
+

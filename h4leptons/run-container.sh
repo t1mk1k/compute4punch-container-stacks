@@ -1,14 +1,17 @@
 #!/bin/bash 
 
-# https://cms-opendata-workshop.github.io/workshop2021-lesson-docker/03-docker-for-cms-opendata/index.html
+## https://cms-opendata-workshop.github.io/workshop2021-lesson-docker/03-docker-for-cms-opendata/index.html
+## https://opendata.cern.ch/record/5500 
 
 if [ $# != 1 ]
   then
-    echo "Supply the indexfile to process or \"dev\" for interactive mode"
+    echo "Specify the indexfile to process or \"dev\" for interactive mode"
     exit
 fi
 
 indexfile=$1
+
+IFS=/ read -r sample subsample container_name <<< "$indexfile"
 
 WORKDIR=/home/cmsusr/CMSSW_5_3_32/src
 ANALYSIS=$WORKDIR/HiggsAnalysis
@@ -27,7 +30,7 @@ if [[ $1 == "dev" ]]
   then  
     docker run -it  --rm  --name higgs-analysis $output_mount $indexfile_mount h4leptons:latest /bin/bash
   else
-    docker run -it  --rm  --name higgs-analysis-$indexfile $output_mount $indexfile_mount h4leptons:latest /bin/bash -c "sh $ANALYSIS/analysis.sh $indexfile" 
+    docker run -it  --rm  --name higgs-analysis-$container_name $output_mount $indexfile_mount h4leptons:latest /bin/bash -c "sh $ANALYSIS/analysis.sh $indexfile" 
 fi
 
 

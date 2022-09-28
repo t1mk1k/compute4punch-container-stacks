@@ -31,9 +31,13 @@
 #include "TBufferFile.h"
 #include "TLorentzVector.h"
 #include "THStack.h"
+#include "TApplication.h"
+#include "TSystem.h"
 #include <math.h>
 
-void M4Lepton() {
+using namespace std;
+
+int main(int argc, char *argv[]) { 
 
   TH1::SetDefaultSumw2(kTRUE);
 
@@ -72,7 +76,7 @@ void M4Lepton() {
   string inFileDouE11 = "DoubleE11.root";
   
   //-- Name output file
-  string outFile = std::string(outDir) + "mass4l-combined.pdf";
+  string outFile = std::string(outDir) + "mass4l";
 
   // Luminosity 2012 and 2011
   Double_t lumi12 = 11580.;
@@ -123,288 +127,527 @@ void M4Lepton() {
   
   // y axis maximum
   Double_t yMax = 30.;
+
+  //---- HISTOGRAM FOR ZZ PROCESS 2012 
+  bool ZZpresent = true;
   
-  ////////////////////// HISTOGRAM FOR ZZ PROCESS 2012 ///////////////////////////
+  //-- ZZ -> 4mu
+  TFile *f2;
+  TH1D *ZZto4mu12;
 
-  // ZZ -> 4mu
-  TFile *f2 = new TFile((inDir + inFileZZ4mu12).c_str());
-  TH1D *ZZto4mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  ZZto4mu12->Scale((lumi12 * xsecZZ412 * sfZZ) / nevtZZ4mu12);
-  //(data lumi * xsec * scale factor) / no.of event b4 any cut
-
-  // ZZ -> 4e
-  f2 = TFile::Open((inDir + inFileZZ4e12).c_str());
-  TH1D *ZZto4e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  ZZto4e12->Scale((lumi12 * xsecZZ412 * sfZZ) / nevtZZ4e12); 
-
-  // ZZ -> 2mu2e
-  f2 = TFile::Open((inDir + inFileZZ2mu2e12).c_str());
-  TH1D *ZZto2mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  ZZto2mu2e12->Scale((lumi12 * xsecZZ2mu2e12 * sfZZ) / nevtZZ2mu2e12); 
+  if(!gSystem->AccessPathName((inDir + inFileZZ4mu12).c_str())) {  
+    f2 = new TFile((inDir + inFileZZ4mu12).c_str());
+    ZZto4mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    ZZto4mu12->Scale((lumi12 * xsecZZ412 * sfZZ) / nevtZZ4mu12);
+  }
+  else
+    ZZpresent = false;
   
-  ////////////////////// HISTOGRAM FOR ZZ PROCESS 2011 ///////////////////////////
+  //-- ZZ -> 4e
+  TH1D *ZZto4e12;
 
-  // ZZ -> 4mu
-  f2 = TFile::Open((inDir + inFileZZ4mu11).c_str());
-  TH1D *ZZto4mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  ZZto4mu11->Scale((lumi11 * xsecZZ411 * sfZZ) / nevtZZ4mu11); 
-
-  // ZZ -> 4e
-  f2 = TFile::Open((inDir + inFileZZ4e11).c_str());
-  TH1D *ZZto4e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  ZZto4e11->Scale((lumi11 * xsecZZ411 * sfZZ) / nevtZZ4e11); 
-
-  // ZZ -> 2mu2e
-  f2 = TFile::Open((inDir + inFileZZ2mu2e11).c_str());
-  TH1D *ZZto2mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  ZZto2mu2e11->Scale((lumi11 * xsecZZ2mu2e11 * sfZZ) / nevtZZ2mu2e11); 
+  if(!gSystem->AccessPathName((inDir + inFileZZ4e12).c_str())) {
+    f2 = TFile::Open((inDir + inFileZZ4e12).c_str());
+    ZZto4e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    ZZto4e12->Scale((lumi12 * xsecZZ412 * sfZZ) / nevtZZ4e12); 
+  }
+  else
+    ZZpresent = false;
   
-  ///////////////////////////// COMBINE ZZ PROCESS ///////////////////////////////
+  //-- ZZ -> 2mu2e
+  TH1D *ZZto2mu2e12;
 
-  TH1D *ZZto4l = (TH1D*) ZZto4mu12->Clone();
-  ZZto4l->Add(ZZto4e12);
-  ZZto4l->Add(ZZto2mu2e12);
-  ZZto4l->Add(ZZto4mu11);
-  ZZto4l->Add(ZZto4e11);
-  ZZto4l->Add(ZZto2mu2e11);
+  if(!gSystem->AccessPathName((inDir + inFileZZ2mu2e12).c_str())) {
+    f2 = TFile::Open((inDir + inFileZZ2mu2e12).c_str());
+    ZZto2mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    ZZto2mu2e12->Scale((lumi12 * xsecZZ2mu2e12 * sfZZ) / nevtZZ2mu2e12); 
+  }
+  else
+    ZZpresent = false;
   
-  gStyle->SetOptStat(0);
+  //-- HISTOGRAM FOR ZZ PROCESS 2011 
 
-  ZZto4l->SetLineColor(kBlack);
-  ZZto4l->SetFillColor(kAzure -9);
-  ZZto4l->SetLineWidth(2);
-  ZZto4l->SetLineStyle(1);
+  //-- ZZ -> 4mu
+  TH1D *ZZto4mu11;
+
+  if(!gSystem->AccessPathName((inDir + inFileZZ4mu11).c_str())) {
+    f2 = TFile::Open((inDir + inFileZZ4mu11).c_str());
+    ZZto4mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    ZZto4mu11->Scale((lumi11 * xsecZZ411 * sfZZ) / nevtZZ4mu11); 
+  }
+  else
+    ZZpresent = false;
   
-  //////////////////// HISTOGRAM FOR HIGGS PROCESS 2012 //////////////////////////
+  //-- ZZ -> 4e
+  TH1D *ZZto4e11;
 
-  // H -> ZZ -> 4mu
-  f2 = TFile::Open((inDir + inFileHZZ12).c_str());
-  TH1D *HZZto4mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  HZZto4mu12->Scale((lumi12 * scalexsecHZZ12) / nevtHZZ12); 
-  //(data lumi * scaled cross section) / no.of event b4 any cut
-
-  // H -> ZZ -> 4e
-  f2 = TFile::Open((inDir + inFileHZZ12).c_str());
-  TH1D *HZZto4e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  HZZto4e12->Scale((lumi12 * scalexsecHZZ12) / nevtHZZ12); 
-
-  // H -> ZZ -> 2mu2e
-  f2 = TFile::Open((inDir + inFileHZZ12).c_str());
-  TH1D *HZZto2mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  HZZto2mu2e12->Scale((lumi12 * scalexsecHZZ12) / nevtHZZ12);
+  if(!gSystem->AccessPathName((inDir + inFileZZ4e11).c_str())) {
+    f2 = TFile::Open((inDir + inFileZZ4e11).c_str());
+    ZZto4e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    ZZto4e11->Scale((lumi11 * xsecZZ411 * sfZZ) / nevtZZ4e11); 
+  }
+  else
+    ZZpresent = false;
   
-  //////////////////// HISTOGRAM FOR HIGGS PROCESS 2011 //////////////////////////
+  //-- ZZ -> 2mu2e
+  TH1D *ZZto2mu2e11;
 
-  // H -> ZZ -> 4mu
-  f2 = TFile::Open((inDir + inFileHZZ11).c_str());
-  TH1D *HZZto4mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  HZZto4mu11->Scale((lumi11 * scalexsecHZZ11) / nevtHZZ11); 
-
-  // H -> ZZ -> 4e
-  f2 = TFile::Open((inDir + inFileHZZ11).c_str());
-  TH1D *HZZto4e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  HZZto4e11->Scale((lumi11 * scalexsecHZZ11) / nevtHZZ11); 
-
-  // H -> ZZ -> 2mu2e
-  f2 = TFile::Open((inDir + inFileHZZ11).c_str());
-  TH1D *HZZto2mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  HZZto2mu2e11->Scale((lumi11 * scalexsecHZZ11) / nevtHZZ11);
+  if(!gSystem->AccessPathName((inDir + inFileZZ2mu2e11).c_str())) {
+    f2 = TFile::Open((inDir + inFileZZ2mu2e11).c_str());
+    ZZto2mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    ZZto2mu2e11->Scale((lumi11 * xsecZZ2mu2e11 * sfZZ) / nevtZZ2mu2e11); 
+  }
+  else
+    ZZpresent = false;
   
-  //////////////////////////// COMBINE HZZ PROCESS ///////////////////////////////
+  //-- COMBINE ZZ PROCESS
+  TH1D *ZZto4l;
   
-  TH1D *HZZto4l = (TH1D*) HZZto4mu12->Clone();
-  HZZto4l->Add(HZZto4e12);
-  HZZto4l->Add(HZZto2mu2e12);
-  HZZto4l->Add(HZZto4mu11);
-  HZZto4l->Add(HZZto4e11);
-  HZZto4l->Add(HZZto2mu2e11);
-
-  HZZto4l->SetLineColor(kRed);
-  HZZto4l->SetLineWidth(2);
-  HZZto4l->SetLineStyle(1);
+  if(ZZpresent) {
+    ZZto4l = (TH1D*) ZZto4mu12->Clone();
+    ZZto4l->Add(ZZto4e12);
+    ZZto4l->Add(ZZto2mu2e12);
+    ZZto4l->Add(ZZto4mu11);
+    ZZto4l->Add(ZZto4e11);
+    ZZto4l->Add(ZZto2mu2e11);
   
-  ///////////////////// HISTOGRAM FOR TTBAR PROCESS 2012 /////////////////////////
+    gStyle->SetOptStat(0);
+    
+    ZZto4l->SetLineColor(kBlack);
+    ZZto4l->SetFillColor(kAzure -9);
+    ZZto4l->SetLineWidth(2);
+    ZZto4l->SetLineStyle(1);
+  }
+  else
+    outFile+="-noZZ";
   
-  // TTBar -> 4mu
-  f2 = TFile::Open((inDir + inFileTTBar12).c_str());
-  TH1D *TTBarto4mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  TTBarto4mu12->Scale((lumi12 * xsecTTBar12) / nevtTTBar12); 
-
-  // TTBar -> 4e
-  f2 = TFile::Open((inDir + inFileTTBar12).c_str());
-  TH1D *TTBarto4e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  TTBarto4e12->Scale((lumi12 * xsecTTBar12) / nevtTTBar12);
-
-  // TTBar -> 2mu2e
-  f2 = TFile::Open((inDir + inFileTTBar12).c_str());
-  TH1D *TTBarto2mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  TTBarto2mu2e12->Scale((lumi12 * xsecTTBar12) / nevtTTBar12);
+  //-- HISTOGRAM FOR HIGGS PROCESS 2012
+  bool Hpresent = true;
   
-  ///////////////////// HISTOGRAM FOR TTBAR PROCESS 2011 /////////////////////////
-
-  // TTBar -> 4mu
-  f2 = TFile::Open((inDir + inFileTTBar11).c_str());
-  TH1D *TTBarto4mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  TTBarto4mu11->Scale((lumi11 * xsecTTBar11 * sfTTBar11) / nevtTTBar11); 
-  //(data lumi * xsec * scale factor) / no.of event b4 any cut
-
-  // TTBar -> 4e
-  f2 = TFile::Open((inDir + inFileTTBar11).c_str());
-  TH1D *TTBarto4e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  TTBarto4e11->Scale((lumi11 * xsecTTBar11 * sfTTBar11) / nevtTTBar11); 
-
-  // TTBar -> 2mu2e
-  f2 = TFile::Open((inDir + inFileTTBar11).c_str());
-  TH1D *TTBarto2mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  TTBarto2mu2e11->Scale((lumi11 * xsecTTBar11 * sfTTBar11) / nevtTTBar11);
+  //-- H -> ZZ -> 4mu
+  TH1D *HZZto4mu12;
   
-  /////////////////////////// COMBINE TTBAR PROCESS //////////////////////////////
+  if(!gSystem->AccessPathName((inDir + inFileHZZ12).c_str())) {
+    f2 = TFile::Open((inDir + inFileHZZ12).c_str());
+    HZZto4mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    HZZto4mu12->Scale((lumi12 * scalexsecHZZ12) / nevtHZZ12); 
+  }
+  else
+    Hpresent = false;
 
-  TH1D *TTBarto4l = (TH1D*) TTBarto4mu12->Clone();
-  TTBarto4l->Add(TTBarto4e12);
-  TTBarto4l->Add(TTBarto2mu2e12);
-  TTBarto4l->Add(TTBarto4mu11);
-  TTBarto4l->Add(TTBarto4e11);
-  TTBarto4l->Add(TTBarto2mu2e11);
+  //-- H -> ZZ -> 4e
+  TH1D *HZZto4e12;
   
-  TTBarto4l->SetLineColor(kBlack);
-  TTBarto4l->SetFillColor(kGray);
-  TTBarto4l->SetLineWidth(2);
-  TTBarto4l->SetLineStyle(1);
+  if(!gSystem->AccessPathName((inDir + inFileHZZ12).c_str())) {
+    f2 = TFile::Open((inDir + inFileHZZ12).c_str());
+    HZZto4e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    HZZto4e12->Scale((lumi12 * scalexsecHZZ12) / nevtHZZ12); 
+  }
+  else
+    Hpresent = false;
   
-  ///////////////////// HISTOGRAM FOR DRLY PROCESS 2012 //////////////////////////
+  //-- H -> ZZ -> 2mu2e
+  TH1D *HZZto2mu2e12;
 
-  // DY 50 -> 4mu
-  f2 = TFile::Open((inDir + inFileDY5012).c_str());
-  TH1D *DY504mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  DY504mu12->Scale((lumi12 * xsecDY5012 * sfDY) / nevtDY5012);
-
-  // DY 50 -> 4e
-  f2 = TFile::Open((inDir + inFileDY5012).c_str());
-  TH1D *DY504e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  DY504e12->Scale((lumi12 * xsecDY5012 * sfDY) / nevtDY5012); 
-
-  // DY 50 -> 2mu2e
-  f2 = TFile::Open((inDir + inFileDY5012).c_str());
-  TH1D *DY502mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  DY502mu2e12->Scale((lumi12 * xsecDY5012 * sfDY) / nevtDY5012); 
-
-  // DY 10 -> 4mu
-  f2 = TFile::Open((inDir + inFileDY1012).c_str());
-  TH1D *DY104mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  DY104mu12->Scale((lumi12 * xsecDY1012 * sfDY) / nevtDY1012); 
-
-  // DY 10 -> 4e
-  f2 = TFile::Open((inDir + inFileDY1012).c_str());
-  TH1D *DY104e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  DY104e12->Scale((lumi12 * xsecDY1012 * sfDY) / nevtDY1012);
-
-  // DY 10 -> 2mu2e
-  f2 = TFile::Open((inDir + inFileDY1012).c_str());
-  TH1D *DY102mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  DY102mu2e12->Scale((lumi12 * xsecDY1012 * sfDY) / nevtDY1012);
+  if(!gSystem->AccessPathName((inDir + inFileHZZ12).c_str())) {
+    f2 = TFile::Open((inDir + inFileHZZ12).c_str());
+    HZZto2mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    HZZto2mu2e12->Scale((lumi12 * scalexsecHZZ12) / nevtHZZ12);
+  }
+  else
+    Hpresent = false;
   
-  ///////////////////// HISTOGRAM FOR DRLY PROCESS 2011 //////////////////////////
+  //-- HISTOGRAM FOR HIGGS PROCESS 2011 
 
-  // DY 50 -> 4mu
-  f2 = TFile::Open((inDir + inFileDY5011).c_str());
-  TH1D *DY504mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  DY504mu11->Scale((lumi11 * xsecDY5011 * sfDY) / nevtDY5011);
+  //-- H -> ZZ -> 4mu
+  TH1D *HZZto4mu11;
 
-  // DY 50 -> 4e
-  f2 = TFile::Open((inDir + inFileDY5011).c_str());
-  TH1D *DY504e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  DY504e11->Scale((lumi11 * xsecDY5011 * sfDY) / nevtDY5011); 
+  if(!gSystem->AccessPathName((inDir + inFileHZZ11).c_str())) {
+    f2 = TFile::Open((inDir + inFileHZZ11).c_str());
+    HZZto4mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    HZZto4mu11->Scale((lumi11 * scalexsecHZZ11) / nevtHZZ11); 
+  }
+  else
+    Hpresent = false;
+    
+  //-- H -> ZZ -> 4e
+  TH1D *HZZto4e11;
 
-  // DY 50 -> 2mu2e
-  f2 = TFile::Open((inDir + inFileDY5011).c_str());
-  TH1D *DY502mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  DY502mu2e11->Scale((lumi11 * xsecDY5011 * sfDY) / nevtDY5011); 
-
-  // DY 10 -> 4mu
-  f2 = TFile::Open((inDir + inFileDY1011).c_str());
-  TH1D *DY104mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
-  DY104mu11->Scale((lumi11 * xsecDY1011 * sfDY) / nevtDY1011); 
-
-  // DY 10 -> 4e
-  f2 = TFile::Open((inDir + inFileDY1011).c_str());
-  TH1D *DY104e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
-  DY104e11->Scale((lumi11 * xsecDY1011 * sfDY) / nevtDY1011); 
-
-  // DY 10 -> 2mu2e
-  f2 = TFile::Open((inDir + inFileDY1011).c_str());
-  TH1D *DY102mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-  DY102mu2e11->Scale((lumi11 * xsecDY1011 * sfDY) / nevtDY1011); 
+  if(!gSystem->AccessPathName((inDir + inFileHZZ11).c_str())) {
+    f2 = TFile::Open((inDir + inFileHZZ11).c_str());
+    HZZto4e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    HZZto4e11->Scale((lumi11 * scalexsecHZZ11) / nevtHZZ11); 
+  }
+  else
+    Hpresent = false;
   
-  /////////////////////////// COMBINE PROCESS DRLY ///////////////////////////////
+  //-- H -> ZZ -> 2mu2e
+  TH1D *HZZto2mu2e11;
 
-  TH1D *DYto4l = (TH1D*) DY504mu12->Clone();
-  DYto4l->Add(DY504e12);
-  DYto4l->Add(DY502mu2e12);
-  DYto4l->Add(DY104mu12);
-  DYto4l->Add(DY104e12);
-  DYto4l->Add(DY102mu2e12);
+  if(!gSystem->AccessPathName((inDir + inFileHZZ11).c_str())) {
+    f2 = TFile::Open((inDir + inFileHZZ11).c_str());
+    HZZto2mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    HZZto2mu2e11->Scale((lumi11 * scalexsecHZZ11) / nevtHZZ11);
+  }
+  else
+    Hpresent = false;
 
-  DYto4l->Add(DY504mu11);
-  DYto4l->Add(DY504e11);
-  DYto4l->Add(DY502mu2e11);
-  DYto4l->Add(DY104mu11);
-  DYto4l->Add(DY104e11);
-  DYto4l->Add(DY102mu2e11);
+  //-- COMBINE HZZ PROCESS
+  TH1D *HZZto4l;
 
-  DYto4l->SetLineColor(kBlack);
-  DYto4l->SetFillColor(kGreen -5);
-  DYto4l->SetLineWidth(2);
-  DYto4l->SetLineStyle(1);
+  if(Hpresent) {
+    HZZto4l = (TH1D*) HZZto4mu12->Clone();
+    HZZto4l->Add(HZZto4e12);
+    HZZto4l->Add(HZZto2mu2e12);
+    HZZto4l->Add(HZZto4mu11);
+    HZZto4l->Add(HZZto4e11);
+    HZZto4l->Add(HZZto2mu2e11);
+
+    HZZto4l->SetLineColor(kRed);
+    HZZto4l->SetLineWidth(2);
+    HZZto4l->SetLineStyle(1);
+  }
+  else
+    outFile+="-noHiggs";
   
-  /////////////////////// HISTOGRAM FOR DATA!!!!! 2012 ///////////////////////////
+  //-- HISTOGRAM FOR TTBAR PROCESS 2012
+  bool TTpresent = true;
   
-  // Double Mu (4mu)
-  TFile *f3 = new TFile((inDir + inFileDouMu12).c_str());
-  TH1D *DoubleMu4mu12 = (TH1D*) f3->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+  //-- TTBar -> 4mu
+  TH1D *TTBarto4mu12;
 
-  // Double Mu (2mu2e)
-  f3 = TFile::Open((inDir + inFileDouMu12).c_str());
-  TH1D *DoubleMu2mu2e12 = (TH1D*) f3->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
-
-  // Double E (4e)
-  f3 = TFile::Open((inDir + inFileDouE12).c_str());
-  TH1D *DoubleE4e12 = (TH1D*) f3->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+  if(!gSystem->AccessPathName((inDir + inFileTTBar12).c_str())) {
+    f2 = TFile::Open((inDir + inFileTTBar12).c_str());
+    TTBarto4mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    TTBarto4mu12->Scale((lumi12 * xsecTTBar12) / nevtTTBar12); 
+  }
+  else
+    TTpresent = false;
   
-  /////////////////////// HISTOGRAM FOR DATA!!!!! 2011 ///////////////////////////
+  //-- TTBar -> 4e
+  TH1D *TTBarto4e12;
 
-  // Double Mu (4mu)
-  f3 = TFile::Open((inDir + inFileDouMu11).c_str());
-  TH1D *DoubleMu4mu11 = (TH1D*) f3->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+  if(!gSystem->AccessPathName((inDir + inFileTTBar12).c_str())) {
+    f2 = TFile::Open((inDir + inFileTTBar12).c_str());
+    TTBarto4e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    TTBarto4e12->Scale((lumi12 * xsecTTBar12) / nevtTTBar12);
+  }
+  else
+    TTpresent = false;
 
-  // Double Mu (2mu2e)  
-  f3 = TFile::Open((inDir + inFileDouMu11).c_str());
-  TH1D *DoubleMu2mu2e11 = (TH1D*) f3->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+  //-- TTBar -> 2mu2e
+  TH1D *TTBarto2mu2e12;
 
-  // Double E (4e)
-  f3 = TFile::Open((inDir + inFileDouE11).c_str());
-  TH1D *DoubleE4e11 = (TH1D*) f3->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+  if(!gSystem->AccessPathName((inDir + inFileTTBar12).c_str())) {
+    f2 = TFile::Open((inDir + inFileTTBar12).c_str());
+    TTBarto2mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    TTBarto2mu2e12->Scale((lumi12 * xsecTTBar12) / nevtTTBar12);
+  }
+  else
+    TTpresent = false;
 
-  ///////////////////////// COMBINE DATA!!!!!!!!!!!! /////////////////////////////
+  //-- HISTOGRAM FOR TTBAR PROCESS 2011
+
+  //-- TTBar -> 4mu
+  TH1D *TTBarto4mu11;
+
+  if(!gSystem->AccessPathName((inDir + inFileTTBar11).c_str())) {
+    f2 = TFile::Open((inDir + inFileTTBar11).c_str());
+    TTBarto4mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    TTBarto4mu11->Scale((lumi11 * xsecTTBar11 * sfTTBar11) / nevtTTBar11); 
+  }
+  else
+    TTpresent = false;
+
+  //-- TTBar -> 4e
+  TH1D *TTBarto4e11;
   
-  TH1D *Dat114l = (TH1D*) DoubleMu4mu12->Clone();
-  Dat114l->Add(DoubleMu2mu2e12);
-  Dat114l->Add(DoubleE4e12);
-  Dat114l->Add(DoubleMu4mu11);
-  Dat114l->Add(DoubleMu2mu2e11);
-  Dat114l->Add(DoubleE4e11);
+  if(!gSystem->AccessPathName((inDir + inFileTTBar11).c_str())) {
+    f2 = TFile::Open((inDir + inFileTTBar11).c_str());
+    TTBarto4e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    TTBarto4e11->Scale((lumi11 * xsecTTBar11 * sfTTBar11) / nevtTTBar11); 
+  }
+  else
+    TTpresent = false;
+    
+  //-- TTBar -> 2mu2e
+  TH1D *TTBarto2mu2e11; 
 
-  Dat114l->SetMarkerColor(kBlack);
-  Dat114l->SetMarkerStyle(20);
-  Dat114l->SetMarkerSize(1.7);
-  Dat114l->SetLineColor(kBlack);
-  Dat114l->SetLineWidth(1);
+  if(!gSystem->AccessPathName((inDir + inFileTTBar11).c_str())) {
+    f2 = TFile::Open((inDir + inFileTTBar11).c_str());
+    TTBarto2mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    TTBarto2mu2e11->Scale((lumi11 * xsecTTBar11 * sfTTBar11) / nevtTTBar11);
+  }
+  else
+    TTpresent = false;
+  
+  //-- COMBINE TTBAR PROCESS
+  TH1D *TTBarto4l;
+  
+  if(TTpresent) {
+    TTBarto4l = (TH1D*) TTBarto4mu12->Clone();
+    TTBarto4l->Add(TTBarto4e12);
+    TTBarto4l->Add(TTBarto2mu2e12);
+    TTBarto4l->Add(TTBarto4mu11);
+    TTBarto4l->Add(TTBarto4e11);
+    TTBarto4l->Add(TTBarto2mu2e11);
+  
+    TTBarto4l->SetLineColor(kBlack);
+    TTBarto4l->SetFillColor(kGray);
+    TTBarto4l->SetLineWidth(2);
+    TTBarto4l->SetLineStyle(1);
+  }
+  
+  //--  HISTOGRAM FOR DY PROCESS 2012
+  bool DYpresent = true;
+  
+  //-- DY 50 -> 4mu
+  TH1D *DY504mu12;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY5012).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY5012).c_str());
+    DY504mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    DY504mu12->Scale((lumi12 * xsecDY5012 * sfDY) / nevtDY5012);
+  }
+  else
+    DYpresent = false;
+  
+  //-- DY 50 -> 4e
+  TH1D *DY504e12;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY5012).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY5012).c_str());
+    DY504e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    DY504e12->Scale((lumi12 * xsecDY5012 * sfDY) / nevtDY5012); 
+  }
+  else
+    DYpresent = false;
+  
+  //-- DY 50 -> 2mu2e
+  TH1D *DY502mu2e12;
+    
+  if(!gSystem->AccessPathName((inDir + inFileDY5012).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY5012).c_str());
+    DY502mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    DY502mu2e12->Scale((lumi12 * xsecDY5012 * sfDY) / nevtDY5012); 
+  }
+  else
+    DYpresent = false;
+  
+  //-- DY 10 -> 4mu
+  TH1D *DY104mu12;
+    
+  if(!gSystem->AccessPathName((inDir + inFileDY1012).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY1012).c_str());
+    DY104mu12 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    DY104mu12->Scale((lumi12 * xsecDY1012 * sfDY) / nevtDY1012); 
+  }
+  else
+    DYpresent = false;
+    
+  //-- DY 10 -> 4e
+  TH1D *DY104e12;
+  
+  if(!gSystem->AccessPathName((inDir + inFileDY1012).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY1012).c_str());
+    DY104e12 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    DY104e12->Scale((lumi12 * xsecDY1012 * sfDY) / nevtDY1012);
+  }
+  else
+    DYpresent = false;
+
+  //-- DY 10 -> 2mu2e
+  TH1D *DY102mu2e12;
+    
+  if(!gSystem->AccessPathName((inDir + inFileDY1012).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY1012).c_str());
+    DY102mu2e12 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    DY102mu2e12->Scale((lumi12 * xsecDY1012 * sfDY) / nevtDY1012);
+  }
+  else
+    DYpresent = false;
+  
+  //-- HISTOGRAM FOR DY PROCESS 2011
+
+  //-- DY 50 -> 4mu
+  TH1D *DY504mu11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY5011).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY5011).c_str());
+    DY504mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    DY504mu11->Scale((lumi11 * xsecDY5011 * sfDY) / nevtDY5011);
+  }
+  else
+    DYpresent = false;
+  
+  //-- DY 50 -> 4e
+  TH1D *DY504e11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY5011).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY5011).c_str());
+    DY504e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    DY504e11->Scale((lumi11 * xsecDY5011 * sfDY) / nevtDY5011); 
+  }
+  else
+    DYpresent = false;
+
+  //-- DY 50 -> 2mu2e
+  TH1D *DY502mu2e11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY5011).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY5011).c_str());
+    DY502mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    DY502mu2e11->Scale((lumi11 * xsecDY5011 * sfDY) / nevtDY5011); 
+  }
+  else
+    DYpresent = false;
+  
+  //-- DY 10 -> 4mu
+  TH1D *DY104mu11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY1011).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY1011).c_str());
+    DY104mu11 = (TH1D*) f2->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+    DY104mu11->Scale((lumi11 * xsecDY1011 * sfDY) / nevtDY1011); 
+  }
+  else
+    DYpresent = false;
+
+  //-- DY 10 -> 4e
+  TH1D *DY104e11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY1011).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY1011).c_str());
+    DY104e11 = (TH1D*) f2->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+    DY104e11->Scale((lumi11 * xsecDY1011 * sfDY) / nevtDY1011); 
+  }
+  else
+    DYpresent = false;
+  
+  //-- DY 10 -> 2mu2e
+  TH1D *DY102mu2e11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDY1011).c_str())) {
+    f2 = TFile::Open((inDir + inFileDY1011).c_str());
+    DY102mu2e11 = (TH1D*) f2->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+    DY102mu2e11->Scale((lumi11 * xsecDY1011 * sfDY) / nevtDY1011); 
+  }
+  else
+    DYpresent = false;
+
+  //-- COMBINE PROCESS DY
+  TH1D *DYto4l;
+
+  if(DYpresent) {
+    DYto4l = (TH1D*) DY504mu12->Clone();
+    DYto4l->Add(DY504e12);
+    DYto4l->Add(DY502mu2e12);
+    DYto4l->Add(DY104mu12);
+    DYto4l->Add(DY104e12);
+    DYto4l->Add(DY102mu2e12);
+
+    DYto4l->Add(DY504mu11);
+    DYto4l->Add(DY504e11);
+    DYto4l->Add(DY502mu2e11);
+    DYto4l->Add(DY104mu11);
+    DYto4l->Add(DY104e11);
+    DYto4l->Add(DY102mu2e11);
+
+    DYto4l->SetLineColor(kBlack);
+    DYto4l->SetFillColor(kGreen -5);
+    DYto4l->SetLineWidth(2);
+    DYto4l->SetLineStyle(1);
+  }
+    
+  //-- HISTOGRAM FOR DATA 2012
+  
+  //-- Double Mu (4mu)
+  TFile *f3; 
+  TH1D *DoubleMu4mu12;
+  bool datapresent = true;
+  
+  if(!gSystem->AccessPathName((inDir + inFileDouMu12).c_str())) {
+    f3 = new TFile((inDir + inFileDouMu12).c_str());
+    DoubleMu4mu12 = (TH1D*) f3->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+  }
+  else
+    datapresent = false;
+    
+  //-- Double Mu (2mu2e)
+  TH1D *DoubleMu2mu2e12;
+
+  if(!gSystem->AccessPathName((inDir + inFileDouMu12).c_str())) {
+    f3 = TFile::Open((inDir + inFileDouMu12).c_str());
+    DoubleMu2mu2e12 = (TH1D*) f3->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+  }
+  else
+    datapresent = false;
+    
+  //-- Double E (4e)
+  TH1D *DoubleE4e12;
+
+  if(!gSystem->AccessPathName((inDir + inFileDouE12).c_str())) {
+    f3 = TFile::Open((inDir + inFileDouE12).c_str());
+    DoubleE4e12 = (TH1D*) f3->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+  }
+  else
+    datapresent = false;
+
+  //-- HISTOGRAM FOR DATA 2011
+
+  //-- Double Mu (4mu)
+  TH1D *DoubleMu4mu11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDouMu11).c_str())) {
+    f3 = TFile::Open((inDir + inFileDouMu11).c_str());
+    DoubleMu4mu11 = (TH1D*) f3->Get("higgsanalyzer/mass4mu_8TeV_low")->Clone();
+  }
+  else
+    datapresent = false;
+
+  //-- Double Mu (2mu2e)  
+  TH1D *DoubleMu2mu2e11;
+
+  if(!gSystem->AccessPathName((inDir + inFileDouMu11).c_str())) {
+    f3 = TFile::Open((inDir + inFileDouMu11).c_str());
+    DoubleMu2mu2e11 = (TH1D*) f3->Get("higgsanalyzer/mass2mu2e_8TeV_low")->Clone();
+  }
+  else
+    datapresent = false;
+
+  //-- Double E (4e)
+  TH1D *DoubleE4e11; 
+
+  if(!gSystem->AccessPathName((inDir + inFileDouE11).c_str())) {
+    f3 = TFile::Open((inDir + inFileDouE11).c_str());
+    DoubleE4e11 = (TH1D*) f3->Get("higgsanalyzer/mass4e_8TeV_low")->Clone();
+  }
+  else
+    datapresent = false;
+  
+  //-- COMBINE DATA
+  TH1D *Dat114l;
+  
+  if(datapresent) {
+    Dat114l = (TH1D*) DoubleMu4mu12->Clone();
+    Dat114l->Add(DoubleMu2mu2e12);
+    Dat114l->Add(DoubleE4e12);
+    Dat114l->Add(DoubleMu4mu11);
+    Dat114l->Add(DoubleMu2mu2e11);
+    Dat114l->Add(DoubleE4e11);
+
+    Dat114l->SetMarkerColor(kBlack);
+    Dat114l->SetMarkerStyle(20);
+    Dat114l->SetMarkerSize(1.7);
+    Dat114l->SetLineColor(kBlack);
+    Dat114l->SetLineWidth(1);
+  }
 
   THStack *mcomb = new THStack("mcomb", " ");
-  mcomb->Add(DYto4l);
-  mcomb->Add(TTBarto4l);
-  mcomb->Add(ZZto4l);
-  mcomb->Add(HZZto4l);
+  if(DYpresent) mcomb->Add(DYto4l);
+  if(TTpresent) mcomb->Add(TTBarto4l);
+  if(ZZpresent) mcomb->Add(ZZto4l);
+  if(Hpresent) mcomb->Add(HZZto4l);
   
   TLegend *leg = new TLegend(.62, .70, .82, .88);
   leg->SetFillColor(0);
@@ -412,17 +655,19 @@ void M4Lepton() {
   leg->SetTextFont(42);
   leg->SetTextSize(0.038);
 
-  leg->AddEntry(Dat114l, "Data", "PE1");
-  leg->AddEntry(DYto4l, "Z/#gamma* + X", "f");
-  leg->AddEntry(TTBarto4l, "TTBar", "f");
-  leg->AddEntry(ZZto4l, "ZZ -> 4l", "f");
-  leg->AddEntry(HZZto4l, "m_{H} = 125 GeV", "f");
+  if(datapresent) leg->AddEntry(Dat114l, "Data", "PE1");
+  if(DYpresent) leg->AddEntry(DYto4l, "Z/#gamma* + X", "f");
+  if(TTpresent) leg->AddEntry(TTBarto4l, "TTBar", "f");
+  if(ZZpresent) leg->AddEntry(ZZto4l, "Z#gamma*,ZZ", "f");
+  if(Hpresent) leg->AddEntry(HZZto4l, "m_{H} = 125 GeV", "f");
 
+  TApplication* rootapp = new TApplication("app",&argc, argv);
+  
   TCanvas *c1 = new TCanvas("c1", "", 200, 10, 1000, 1000);
 
-  Dat114l->Draw("PE1");
+  if(datapresent) Dat114l->Draw("PE1");
   mcomb->Draw("hist");
-  Dat114l->Draw("PE1 same");
+  if(datapresent) Dat114l->Draw("PE1 same");
 
   mcomb->GetXaxis()->SetTitle("m_{4l} (GeV)");
   mcomb->GetYaxis()->SetTitle("Events / 3 GeV");
@@ -437,10 +682,18 @@ void M4Lepton() {
   txt2->SetTextFont(42);
   txt2->DrawLatex(0.14, 0.91, title.c_str());
 
+  TLatex *txt3 = new TLatex();
+  txt3->DrawTextNDC(0.15,0.78,"processed using");
+
+  TLatex *txt4 = new TLatex();
+  txt4->DrawTextNDC(0.15,0.72,"COMPUTE4PUNCH");
+
+  TLatex *txt5 = new TLatex();				 
+  txt5->DrawTextNDC(0.15,0.66,"resources");
+
   leg->Draw();
 
+  outFile+=".pdf";
   c1->SaveAs(outFile.c_str());
-  //  c1->Close();
-  //  gROOT->ProcessLine(".q");
-   
+  c1->WaitPrimitive();
 }
