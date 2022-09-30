@@ -35,16 +35,16 @@ mkdir $HOME/H4leptons
 cd $HOME/H4leptons
 ```
 
-2. Clone the [gitlab repository](https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons/-/tree/main/h4leptons):
+2. Clone the [gitlab repository](https://gitlab-p4n.aip.de/compute4punch/container-stacks/-/tree/main/h4leptons):
 
 ```
-git clone https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons.git
+git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 ```
 
 3. Dowload the indexfiles corresponding to the data sets and Monte Carlo for 2011 and 2012: 
 
 ```
-cd container-stacks-h4leptons/h4leptons
+cd container-stacks/h4leptons
 ./Download-Indexfiles/download-sample.sh data2011
 ./Download-Indexfiles/download-sample.sh data2012
 ./Download-Indexfiles/download-sample.sh moca2011
@@ -106,16 +106,16 @@ mkdir $HOME/H4leptons
 cd $HOME/H4leptons
 ```
 
-2. Clone the [gitlab repository](https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons/-/tree/main/h4leptons):
+2. Clone the [gitlab repository](https://gitlab-p4n.aip.de/compute4punch/container-stacks/-/tree/main/h4leptons):
 
 ```
-git clone https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons.git
+git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 ```
 
 3. Dowload the indexfiles corresponding to the data sets and Monte Carlo for 2011 and 2012:
 
 ```
-cd container-stacks-h4leptons/h4leptons
+cd container-stacks/h4leptons
 ./Download-Indexfiles/download-sample.sh data2011
 ./Download-Indexfiles/download-sample.sh data2012
 ./Download-Indexfiles/download-sample.sh moca2011
@@ -284,16 +284,16 @@ mkdir $HOME/H4leptons
 cd $HOME/H4leptons
 ```
 
-2. Clone the [gitlab repository](https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons/-/tree/main/h4leptons):
+2. Clone the [gitlab repository](https://gitlab-p4n.aip.de/compute4punch/container-stacks/-/tree/main/h4leptons):
 
 ```
-git clone https://gitlab-p4n.aip.de/benoit.roland/container-stacks-h4leptons.git
+git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 ```
 
 3. Download the indexfiles corresponding to the Higgs Monte Carlo samples for 2011 and 2012:
 
 ```
-cd container-stacks-h4leptons/h4leptons
+cd container-stacks/h4leptons
 ./Download-Indexfiles/download-sample.sh moca2011/SMHiggsToZZTo4L
 ./Download-Indexfiles/download-sample.sh moca2012/SMHiggsToZZTo4L
 
