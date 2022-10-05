@@ -26,7 +26,8 @@ then
    echo "Your token is valid"
 
 else 
-   echo "Issue with oidc-agent or access token"
+   echo "Please set up the mccli virtual environment:"
+   echo "source ~/mccli_venv/bin/activate"
    exit 
 fi
 
