@@ -3,8 +3,15 @@
 INDEX_PATH=$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Indexfiles-Splitted
 LOG_PATH=$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Submission/logs
 
-eval `oidc-agent`
-oidc-add punch-aai
+CHECK_AGENT="Your token is valid"
+UTILS="$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Utils"
+CHECK_AGENT=$($UTILS/check-oidc-agent.sh)
+
+if [[ $CHECK_AGENT != "Your token is valid" ]]; then
+   $UTILS/check-oidc-agent.sh
+   exit
+fi
+
 export TOKEN=`oidc-token -f punch-aai`
 
 function list_desy() {
