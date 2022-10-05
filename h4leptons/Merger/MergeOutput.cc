@@ -33,7 +33,7 @@ vector<string> GetFileList(string directory) {
   return(filelist);
 }
 
-void Merge(string sample, string sample_merged) {
+void Merge(vector<string> samplelist, string sample_merged) {
 
   //-- retrieve HOME directory
   const char* home = getenv("HOME");
@@ -42,20 +42,24 @@ void Merge(string sample, string sample_merged) {
   string outputdir_in = std::string(home) + "/H4leptons/container-stacks-h4leptons/h4leptons/Output/";
   string outputdir_merged = std::string(home) + "/H4leptons/container-stacks-h4leptons/h4leptons/OutputMerged/";
   
-  string dir_file_in = outputdir_in + sample;
   string file_merged = outputdir_merged + sample_merged;		       
   
-  if (!gSystem->AccessPathName(file_merged.c_str())) {
-    cout<<"sample "<<sample<<" already merged"<<endl;
-    return;
+  if(!gSystem->AccessPathName(file_merged.c_str())) {
+    for(int isample = 0; isample < samplelist.size(); i++) {
+      cout<<"sample "<<samplelist[isample]<<" already merged"<<endl;
+      return;
+    }
   }
   
   string command = "hadd " + file_merged;			       
-										       
-  vector<string> filelist = GetFileList(dir_file_in);		       
+
+  for(int isample = 0; isample < samplelist.size(); i++) {
+    string dir_file_in = outputdir_in + samplelist[isample];				       
+    vector<string> filelist = GetFileList(dir_file_in);		       
     										       
-  for(int i = 0; i < filelist.size(); i++) {			       
-    command = command + " " + filelist[i];   
+    for(int ifile = 0; ifile < filelist.size(); i++) {			       
+      command = command + " " + filelist[ifile];   
+    }
   }
         
   gSystem->Exec(command.c_str());                                       
