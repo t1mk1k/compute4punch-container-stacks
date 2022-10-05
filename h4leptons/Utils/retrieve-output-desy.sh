@@ -6,10 +6,17 @@ if [ $# != 1 ]
     exit
 fi
 
-eval `oidc-agent`
-oidc-add punch-aai
-export TOKEN=`oidc-token -f punch-aai`
+CHECK_AGENT="Your token is valid"
+UTILS="$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Utils"
+CHECK_AGENT=$($UTILS/check-oidc-agent.sh)
 
+if [[ $CHECK_AGENT != "Your token is valid" ]]
+then
+   $UTILS/check-oidc-agent.sh
+   exit
+fi
+
+export TOKEN=`oidc-token -f punch-aai`
 retrieve_sample=$1
 
 function retrieve_desy() {
@@ -18,26 +25,33 @@ SAMPLE=$1
 INDEXPATH=$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Indexfiles-Splitted
 OUTPUTDIR=$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Output
 
-echo ""
-echo "### retrieving $SAMPLE ###"
-echo ""
+if [[ $SAMPLE != "data2011" ]] && [[ $SAMPLE != "data2012" ]] && [[ $SAMPLE != "moca2011" ]] && [[ $SAMPLE != "moca2012" ]]; then
+   if ! [ -z "$(ls $OUTPUTDIR/$SAMPLE)" ]; then
+      echo "Output files already retrieved for $SAMPLE"
+      echo ""
+   else
+      echo ""
+      echo "### retrieving $SAMPLE ###"
+      echo ""
 
-for file in $INDEXPATH/$SAMPLE/*; do
-   file=$(basename $file)
-   file=${file//".txt"/}
-   file+=".root"
-   command="curl -H \"Authorization: Bearer ${TOKEN}\" --output $OUTPUTDIR/$SAMPLE/$file  https://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$SAMPLE/$file"
-   #echo $command
-   #echo ""
-   eval "$command"
-done
+      for file in $INDEXPATH/$SAMPLE/*; do
+	 file=$(basename $file)
+	 file=${file//".txt"/}
+	 file+=".root"
+	 command="curl -H \"Authorization: Bearer ${TOKEN}\" --output $OUTPUTDIR/$SAMPLE/$file  https://dcache-demo.desy.de:2443/punch/c4p-cern-open-data-demo/$SAMPLE/$file"
+	 #echo $command
+	 #echo ""
+	 eval "$command"
+      done
 
-echo ""
-echo "$SAMPLE has been retrieved successfully"
-echo ""
+      echo ""
+      echo "$SAMPLE has been retrieved successfully"
+      echo ""
+   fi
+fi
 }
 
-if [[ $retrieve_sample = "data2011" ]]
+if [[ $retrieve_sample == "data2011" ]]
    then
      echo ""
      echo "### retrieving data2011 ###"
@@ -46,7 +60,7 @@ if [[ $retrieve_sample = "data2011" ]]
      retrieve_desy data2011/Run2011A_DoubleElectron
      retrieve_desy data2011/Run2011A_DoubleMu
 
-elif [[ $retrieve_sample = "data2012" ]]
+elif [[ $retrieve_sample == "data2012" ]]
    then
       echo ""
       echo "### retrieving data2012 ###"
@@ -57,7 +71,7 @@ elif [[ $retrieve_sample = "data2012" ]]
       retrieve_desy data2012/Run2012C_DoubleElectron
       retrieve_desy data2012/Run2012C_DoubleMuParked
 
-elif [[ $retrieve_sample = "moca2011" ]]
+elif [[ $retrieve_sample == "moca2011" ]]
    then
       echo ""
       echo "### retrieving moca2011 ###"
@@ -76,7 +90,7 @@ elif [[ $retrieve_sample = "moca2011" ]]
       retrieve_desy moca2011/ZZTo4mu
 
 
-elif [[ $retrieve_sample = "moca2012" ]]
+elif [[ $retrieve_sample == "moca2012" ]]
    then
       echo ""
       echo "### retrieving moca2012 ###"
@@ -93,6 +107,6 @@ elif [[ $retrieve_sample = "moca2012" ]]
 
 else
    retrieve_desy $retrieve_sample
-fi    
+fi
 
 unset TOKEN
