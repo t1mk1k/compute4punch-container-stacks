@@ -23,7 +23,7 @@ RUN yum -y install epel-release && yum clean all
 RUN yum -y install condor \
                    python36 \
                    ansible \
-                   singularity \
+                   apptainer \
                    tsocks \
      && yum clean all
 
