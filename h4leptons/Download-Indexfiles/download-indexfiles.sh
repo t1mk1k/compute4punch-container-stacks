@@ -22,23 +22,38 @@ sample=$1
 Indexfiles="$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Indexfiles/"
 database="$HOME/H4leptons/container-stacks-h4leptons/h4leptons/Download-Indexfiles/list-sample.txt"
 
-while read -r database_sample database_index; do
-   if [[ $database_sample == *$sample* ]]; then
-      if ! [ -z "$(ls $Indexfiles/$database_sample)" ]; then
-	 echo "Indexfiles already available for $sample"
-	 exit 0
-      fi
-   fi
-done < "$database"
-
-list_sample=()
-list_index=()
+old_database_sample=""
+declare -i num_total
+declare -i num_downloaded
 
 while read -r database_sample database_index; do
-   WGET="wget --no-check-certificate -P $Indexfiles"
-   if [[ $database_sample == *$sample* ]]; then
-      database_index=${database_index/opendata/"https://opendata.cern.ch/record"}
-      WGET="$WGET$database_sample $database_index"
-      $WGET
-   fi
+
+    WGET="wget --no-check-certificate -P $Indexfiles"
+
+    if [[ $database_sample == *$sample* ]]; then
+
+	num_total=$(grep $database_sample $database | wc -l)
+	num_downloaded=0
+
+	if ! [ -z "$(ls $Indexfiles/$database_sample)" ]; then
+            num_downloaded=$(ls $Indexfiles/$database_sample/*.txt | wc -l)
+	fi	  
+
+	if [[ $num_downloaded < $num_total ]]; then
+	    echo "" 
+	    echo "$database_sample: download indexfile $(($num_downloaded+1)) on a total of $num_total indexfile(s)"
+	    echo ""
+	    database_index=${database_index/opendata/"https://opendata.cern.ch/record"}
+            WGET="$WGET$database_sample $database_index"
+	    $WGET
+	    
+	elif [[ $old_database_sample != $database_sample ]] ; then	 
+            old_database_sample=$database_sample
+	    echo ""
+	    echo "$database_sample: indexfiles already available"
+	    echo ""  
+	fi
+	
+    fi
+
 done < "$database"
