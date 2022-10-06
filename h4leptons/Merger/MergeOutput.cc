@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
 
   if(argc!=2)
     {
-      cout<<"Specify the sample to merge: data2011, data2012, moca2011, moca2012 or single Monte Carlo sample"<<endl;
+      cout<<"Specify the samples to merge: data2011, data2012, moca2011, moca2012 or a specific Monte Carlo sample"<<endl;
       cout<<"Monte Carlo samples 2011: ZZ4mu11, ZZ4e11, ZZ2mu2e11, HZZ11, TTBar11, DY10TuneZ11, DY50TuneZ11"<<endl;
       cout<<"Monte Carlo samples 2012: ZZ4mu12, ZZ4e12, ZZ2mu2e12, HZZ12, TTBar12, DY10TuneZ12, DY50TuneZ12"<<endl;
       exit(0);
