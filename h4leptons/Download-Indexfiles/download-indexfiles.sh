@@ -3,9 +3,10 @@
 if [ $# != 1 ]; then
     echo "Specify the indexfiles to download: data2011, data2012, moca2011, moca2012 or a specific indexfile"
     echo ""
-    echo "data 2011 indexfiles: data2011/Run2011A_DoubleMu, data2011/Run2011A_DoubleElectron"
+    echo "data 2011 indexfiles: data2011/Run2011A_DoubleElectron, data2011/Run2011A_DoubleMu"
     echo ""
-    echo "data 2012 indexfiles: data2012/Run2012B_DoubleMuParked, data2012/Run2012C_DoubleMuParked, data2012/Run2012B_DoubleElectron, data2012/Run2012C_DoubleElectron"
+    echo "data 2012 indexfiles: data2012/Run2012B_DoubleElectron, data2012/Run2012B_DoubleMuParked"
+    echo "                      data2012/Run2012C_DoubleElectron, data2012/Run2012C_DoubleMuParked"
     echo ""
     echo "moca 2011 indexfiles: moca2011/ZZTo4mu, moca2011/ZZTo4e, moca2011/ZZTo2e2mu"
     echo "                      moca2011/TTTo2L2Nu2B, moca2011/SMHiggsToZZTo4L"
