@@ -45,10 +45,10 @@ git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 
 ```
 cd container-stacks/h4leptons
-./Download-Indexfiles/download-sample.sh data2011
-./Download-Indexfiles/download-sample.sh data2012
-./Download-Indexfiles/download-sample.sh moca2011
-./Download-Indexfiles/download-sample.sh moca2012
+./Download-Indexfiles/download-indexfiles.sh data2011
+./Download-Indexfiles/download-indexfiles.sh data2012
+./Download-Indexfiles/download-indexfiles.sh moca2011
+./Download-Indexfiles/download-indexfiles.sh moca2012
 ```
 
 After a successful download, the indexfiles are located in the directory `Indexfiles` where they are classified according to the data sets
@@ -116,10 +116,10 @@ git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 
 ```
 cd container-stacks/h4leptons
-./Download-Indexfiles/download-sample.sh data2011
-./Download-Indexfiles/download-sample.sh data2012
-./Download-Indexfiles/download-sample.sh moca2011
-./Download-Indexfiles/download-sample.sh moca2012
+./Download-Indexfiles/download-indexfiles.sh data2011
+./Download-Indexfiles/download-indexfiles.sh data2012
+./Download-Indexfiles/download-indexfiles.sh moca2011
+./Download-Indexfiles/download-indexfiles.sh moca2012
 ```
 
 After a successful download, the indexfiles are located in the directory `Indexfiles` where they are classified according to the data sets
@@ -237,14 +237,14 @@ cd ..
 ./Utils/test-production.sh
 ```
 
-6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-output-desy.sh` 
+6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-desy-output.sh` 
 located in the directory `Utils`. From the directory `h4leptons`you are located in, do the following commands:
 
 ```
-./Utils/retrieve-output-desy.sh data2011
-./Utils/retrieve-output-desy.sh data2012
-./Utils/retrieve-output-desy.sh moca2011
-./Utils/retrieve-output-desy.sh moca2012
+./Utils/retrieve-desy-output.sh data2011
+./Utils/retrieve-desy-output.sh data2012
+./Utils/retrieve-desy-output.sh moca2011
+./Utils/retrieve-desy-output.sh moca2012
 ```
 
 After a successful download, the output files are located in the directory `Output`.
@@ -294,16 +294,16 @@ git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 
 ```
 cd container-stacks/h4leptons
-./Download-Indexfiles/download-sample.sh moca2011/SMHiggsToZZTo4L
-./Download-Indexfiles/download-sample.sh moca2012/SMHiggsToZZTo4L
+./Download-Indexfiles/download-indexfiles.sh moca2011/SMHiggsToZZTo4L
+./Download-Indexfiles/download-indexfiles.sh moca2012/SMHiggsToZZTo4L
 
-./Download-Indexfiles/download-sample.sh moca2011/ZZTo4e
-./Download-Indexfiles/download-sample.sh moca2011/ZZTo4mu
-./Download-Indexfiles/download-sample.sh moca2011/ZZTo2e2mu
+./Download-Indexfiles/download-indexfiles.sh moca2011/ZZTo4e
+./Download-Indexfiles/download-indexfiles.sh moca2011/ZZTo4mu
+./Download-Indexfiles/download-indexfiles.sh moca2011/ZZTo2e2mu
 
-./Download-Indexfiles/download-sample.sh moca2012/ZZTo4e
-./Download-Indexfiles/download-sample.sh moca2012/ZZTo4mu
-./Download-Indexfiles/download-sample.sh moca2012/ZZTo2e2mu
+./Download-Indexfiles/download-indexfiles.sh moca2012/ZZTo4e
+./Download-Indexfiles/download-indexfiles.sh moca2012/ZZTo4mu
+./Download-Indexfiles/download-indexfiles.sh moca2012/ZZTo2e2mu
 ```
 
 After a successful download, the indexfiles are located in the directory `Indexfiles` where they are classified according to the data sets
@@ -361,20 +361,20 @@ cd ..
 ./Utils/test-production.sh
 ```
 
-6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-output-desy.sh`
+6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-desy-output.sh`
 located in the directory `Utils`. From the directory `h4leptons`you are located in, do the following commands:
 
 ```
-./Utils/retrieve-output-desy.sh moca2011/SMHiggsToZZTo4L
-./Utils/retrieve-output-desy.sh moca2012/SMHiggsToZZTo4L
-
-./Utils/retrieve-output-desy.sh  moca2011/ZZTo2e2mu
-./Utils/retrieve-output-desy.sh moca2011/ZZTo4e
-./Utils/retrieve-output-desy.sh moca2011/ZZTo4mu
-
-./Utils/retrieve-output-desy.sh moca2012/ZZTo2e2mu
-./Utils/retrieve-output-desy.sh moca2012/ZZTo4e
-./Utils/retrieve-output-desy.sh moca2012/ZZTo4mu
+./Utils/retrieve-desy-output.sh moca2011/SMHiggsToZZTo4L
+./Utils/retrieve-desy-output.sh moca2012/SMHiggsToZZTo4L
+		     
+./Utils/retrieve-desy-output.sh moca2011/ZZTo2e2mu
+./Utils/retrieve-desy-output.sh moca2011/ZZTo4e
+./Utils/retrieve-desy-output.sh moca2011/ZZTo4mu
+		     
+./Utils/retrieve-desy-output.sh moca2012/ZZTo2e2mu
+./Utils/retrieve-desy-output.sh moca2012/ZZTo4e
+./Utils/retrieve-desy-output.sh moca2012/ZZTo4mu
 ```
 
 After a successful download, the output files are located in the directory `Output`.
