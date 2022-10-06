@@ -135,42 +135,42 @@ ls Indexfiles/*/*
 data 2011:
 
 ```
-./Split-Indexfiles/split-sample.sh data2011/Run2011A_DoubleElectron 10
-./Split-Indexfiles/split-sample.sh data2011/Run2011A_DoubleMu 10
+./Split-Indexfiles/split-indexfiles.sh data2011/Run2011A_DoubleElectron 10
+./Split-Indexfiles/split-indexfiles.sh data2011/Run2011A_DoubleMu 10
 ```
 
 data 2012:
 
 ```
-./Split-Indexfiles/split-sample.sh data2012/Run2012B_DoubleElectron 10
-./Split-Indexfiles/split-sample.sh data2012/Run2012B_DoubleMuParked 10
-./Split-Indexfiles/split-sample.sh data2012/Run2012C_DoubleElectron 10
-./Split-Indexfiles/split-sample.sh data2012/Run2012C_DoubleMuParked 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012B_DoubleElectron 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012B_DoubleMuParked 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012C_DoubleElectron 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012C_DoubleMuParked 10
 ```
 
 moca 2011:
 
 ```
-./Split-Indexfiles/split-sample.sh moca2011/DYJetsToLL_M-10To50 10
-./Split-Indexfiles/split-sample.sh moca2011/DYJetsToLL_M-50 10
-./Split-Indexfiles/split-sample.sh moca2011/SMHiggsToZZTo4L 5
-./Split-Indexfiles/split-sample.sh moca2011/TTTo2L2Nu2B 10
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4mu 5
-```
+./Split-Indexfiles/split-indexfiles.sh moca2011/DYJetsToLL_M-10To50 10
+./Split-Indexfiles/split-indexfiles.sh moca2011/DYJetsToLL_M-50 10
+./Split-Indexfiles/split-indexfiles.sh moca2011/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/TTTo2L2Nu2B 10
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4mu 5
+```		  
 
 moca 2012:
 
 ```
-./Split-Indexfiles/split-sample.sh moca2012/DYJetsToLL_M-10to50_HT-200to400 10
-./Split-Indexfiles/split-sample.sh moca2012/DYJetsToLL_M-10to50_HT-400toInf 10
-./Split-Indexfiles/split-sample.sh moca2012/DYJetsToLL_M-50 10
-./Split-Indexfiles/split-sample.sh moca2012/SMHiggsToZZTo4L 5
-./Split-Indexfiles/split-sample.sh moca2012/TTTo2L2Nu2B 10
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/DYJetsToLL_M-10to50_HT-200to400 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/DYJetsToLL_M-10to50_HT-400toInf 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/DYJetsToLL_M-50 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/TTTo2L2Nu2B 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4mu 5
 ```
 
 After splitting, the indexfiles are located in the directory `Indexfiles-Splitted`:
@@ -316,17 +316,17 @@ ls Indexfiles/*/*
 4. Split the indexfiles for the Higgs Monte Carlo samples into smaller files to have batch jobs of reasonable size:
 
 ```
-./Split-Indexfiles/split-sample.sh moca2011/SMHiggsToZZTo4L 5
-./Split-Indexfiles/split-sample.sh moca2012/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/SMHiggsToZZTo4L 5
 
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4mu 5
-
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4mu 5
-```
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4mu 5
+			 
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4mu 5
+```			
 
 After splitting, the indexfiles are located in the directory `Indexfiles-Splitted`:
 
