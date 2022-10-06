@@ -12,7 +12,7 @@ if [ $# != 2 ]; then
     echo ""
     echo "moca 2011 samples: moca2011/ZZTo2e2mu, moca2011/ZZTo4e, moca2011/ZZTo4mu"
     echo "                   moca2011/TTTo2L2Nu2B, moca2011/SMHiggsToZZTo4L"
-    echo "                   moca2011/DYJetsToLL_M-10To50 prod, moca2011/DYJetsToLL_M-50/DYJetsToLL_M-50_sample_[1-5]"
+    echo "                   moca2011/DYJetsToLL_M-10To50, moca2011/DYJetsToLL_M-50/DYJetsToLL_M-50_sample_[1-5]"
     echo ""
     echo "moca 2012 samples: moca2012/ZZTo2e2mu, moca2012/ZZTo4e, moca2012/ZZTo4mu"
     echo "                   moca2012/TTTo2L2Nu2B, moca2012/SMHiggsToZZTo4L"
