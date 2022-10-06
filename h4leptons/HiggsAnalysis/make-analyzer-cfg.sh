@@ -1,7 +1,6 @@
 #!/bin/bash
 
-if [ $# != 1 ]
-  then
+if [ $# != 1 ]; then
     echo "Specify the indexfile to process"
     exit
 fi
@@ -41,20 +40,18 @@ echo "process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True
 echo "" >> $pythonfile
 echo "process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10000))" >> $pythonfile
 
-if [[ $indexfile == *Run2011A* ]] || [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]
-  then
+if [[ $indexfile == *Run2011A* ]] || [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]; then
     echo ""  >> $pythonfile
     echo "## Good run selection" >> $pythonfile
     echo "" >> $pythonfile
 fi
 
-if [[ $indexfile == *Run2011A* ]] 
-  then 
+if [[ $indexfile == *Run2011A* ]]; then 
     echo "goodrunlist = '$ANALYSIS/GoodRunList/Cert_160404-180252_7TeV_ReRecoNov08_Collisions11_JSON.txt'" >> $pythonfile
     echo "" >> $pythonfile
     echo "myLumis = LumiList.LumiList(filename = goodrunlist).getCMSSWString().split(',')" >> $pythonfile
-elif [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]
-  then
+
+elif [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]; then
     echo "goodrunlist = '$ANALYSIS/GoodRunList/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt'" >> $pythonfile
     echo "" >> $pythonfile
     echo "myLumis = LumiList.LumiList(filename = goodrunlist).getCMSSWString().split(',')" >> $pythonfile
@@ -69,8 +66,7 @@ echo "inputfile = FileUtils.loadListFromFile('$INDEXPATH/$indexfile')" >> $pytho
 echo "" >> $pythonfile
 echo "process.source = cms.Source(\"PoolSource\", fileNames = cms.untracked.vstring(*inputfile))" >> $pythonfile
 
-if [[ $indexfile == *Run2011A* ]] || [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]
-  then
+if [[ $indexfile == *Run2011A* ]] || [[ $indexfile == *Run2012B* ]] || [[ $indexfile == *Run2012C* ]]; then
     echo "" >> $pythonfile
     echo "## Apply good run selection" >> $pythonfile
     echo "" >> $pythonfile
