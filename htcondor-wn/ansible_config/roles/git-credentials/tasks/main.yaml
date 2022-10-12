@@ -1,5 +1,5 @@
 - name: Add credential store to global gitconfig
-  community.general.git_config:
+  git_config:
     name: credential.helper
     scope: global
     value: "store --file /scratch/.git-credentials"
