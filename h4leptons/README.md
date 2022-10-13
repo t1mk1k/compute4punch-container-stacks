@@ -45,10 +45,10 @@ git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 
 ```
 cd container-stacks/h4leptons
-./Download-Indexfiles/download-sample.sh data2011
-./Download-Indexfiles/download-sample.sh data2012
-./Download-Indexfiles/download-sample.sh moca2011
-./Download-Indexfiles/download-sample.sh moca2012
+./Download-Indexfiles/download-indexfiles.sh data2011
+./Download-Indexfiles/download-indexfiles.sh data2012
+./Download-Indexfiles/download-indexfiles.sh moca2011
+./Download-Indexfiles/download-indexfiles.sh moca2012
 ```
 
 After a successful download, the indexfiles are located in the directory `Indexfiles` where they are classified according to the data sets
@@ -116,10 +116,10 @@ git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 
 ```
 cd container-stacks/h4leptons
-./Download-Indexfiles/download-sample.sh data2011
-./Download-Indexfiles/download-sample.sh data2012
-./Download-Indexfiles/download-sample.sh moca2011
-./Download-Indexfiles/download-sample.sh moca2012
+./Download-Indexfiles/download-indexfiles.sh data2011
+./Download-Indexfiles/download-indexfiles.sh data2012
+./Download-Indexfiles/download-indexfiles.sh moca2011
+./Download-Indexfiles/download-indexfiles.sh moca2012
 ```
 
 After a successful download, the indexfiles are located in the directory `Indexfiles` where they are classified according to the data sets
@@ -135,42 +135,42 @@ ls Indexfiles/*/*
 data 2011:
 
 ```
-./Split-Indexfiles/split-sample.sh data2011/Run2011A_DoubleElectron 10
-./Split-Indexfiles/split-sample.sh data2011/Run2011A_DoubleMu 10
+./Split-Indexfiles/split-indexfiles.sh data2011/Run2011A_DoubleElectron 10
+./Split-Indexfiles/split-indexfiles.sh data2011/Run2011A_DoubleMu 10
 ```
 
 data 2012:
 
 ```
-./Split-Indexfiles/split-sample.sh data2012/Run2012B_DoubleElectron 10
-./Split-Indexfiles/split-sample.sh data2012/Run2012B_DoubleMuParked 10
-./Split-Indexfiles/split-sample.sh data2012/Run2012C_DoubleElectron 10
-./Split-Indexfiles/split-sample.sh data2012/Run2012C_DoubleMuParked 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012B_DoubleElectron 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012B_DoubleMuParked 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012C_DoubleElectron 10
+./Split-Indexfiles/split-indexfiles.sh data2012/Run2012C_DoubleMuParked 10
 ```
 
 moca 2011:
 
 ```
-./Split-Indexfiles/split-sample.sh moca2011/DYJetsToLL_M-10To50 10
-./Split-Indexfiles/split-sample.sh moca2011/DYJetsToLL_M-50 10
-./Split-Indexfiles/split-sample.sh moca2011/SMHiggsToZZTo4L 5
-./Split-Indexfiles/split-sample.sh moca2011/TTTo2L2Nu2B 10
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4mu 5
-```
+./Split-Indexfiles/split-indexfiles.sh moca2011/DYJetsToLL_M-10To50 10
+./Split-Indexfiles/split-indexfiles.sh moca2011/DYJetsToLL_M-50 10
+./Split-Indexfiles/split-indexfiles.sh moca2011/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/TTTo2L2Nu2B 10
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4mu 5
+```		  
 
 moca 2012:
 
 ```
-./Split-Indexfiles/split-sample.sh moca2012/DYJetsToLL_M-10to50_HT-200to400 10
-./Split-Indexfiles/split-sample.sh moca2012/DYJetsToLL_M-10to50_HT-400toInf 10
-./Split-Indexfiles/split-sample.sh moca2012/DYJetsToLL_M-50 10
-./Split-Indexfiles/split-sample.sh moca2012/SMHiggsToZZTo4L 5
-./Split-Indexfiles/split-sample.sh moca2012/TTTo2L2Nu2B 10
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/DYJetsToLL_M-10to50_HT-200to400 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/DYJetsToLL_M-10to50_HT-400toInf 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/DYJetsToLL_M-50 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/TTTo2L2Nu2B 10
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4mu 5
 ```
 
 After splitting, the indexfiles are located in the directory `Indexfiles-Splitted`:
@@ -237,14 +237,14 @@ cd ..
 ./Utils/test-production.sh
 ```
 
-6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-output-desy.sh` 
+6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-desy-output.sh` 
 located in the directory `Utils`. From the directory `h4leptons`you are located in, do the following commands:
 
 ```
-./Utils/retrieve-output-desy.sh data2011
-./Utils/retrieve-output-desy.sh data2012
-./Utils/retrieve-output-desy.sh moca2011
-./Utils/retrieve-output-desy.sh moca2012
+./Utils/retrieve-desy-output.sh data2011
+./Utils/retrieve-desy-output.sh data2012
+./Utils/retrieve-desy-output.sh moca2011
+./Utils/retrieve-desy-output.sh moca2012
 ```
 
 After a successful download, the output files are located in the directory `Output`.
@@ -294,16 +294,16 @@ git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 
 ```
 cd container-stacks/h4leptons
-./Download-Indexfiles/download-sample.sh moca2011/SMHiggsToZZTo4L
-./Download-Indexfiles/download-sample.sh moca2012/SMHiggsToZZTo4L
+./Download-Indexfiles/download-indexfiles.sh moca2011/SMHiggsToZZTo4L
+./Download-Indexfiles/download-indexfiles.sh moca2012/SMHiggsToZZTo4L
 
-./Download-Indexfiles/download-sample.sh moca2011/ZZTo4e
-./Download-Indexfiles/download-sample.sh moca2011/ZZTo4mu
-./Download-Indexfiles/download-sample.sh moca2011/ZZTo2e2mu
+./Download-Indexfiles/download-indexfiles.sh moca2011/ZZTo4e
+./Download-Indexfiles/download-indexfiles.sh moca2011/ZZTo4mu
+./Download-Indexfiles/download-indexfiles.sh moca2011/ZZTo2e2mu
 
-./Download-Indexfiles/download-sample.sh moca2012/ZZTo4e
-./Download-Indexfiles/download-sample.sh moca2012/ZZTo4mu
-./Download-Indexfiles/download-sample.sh moca2012/ZZTo2e2mu
+./Download-Indexfiles/download-indexfiles.sh moca2012/ZZTo4e
+./Download-Indexfiles/download-indexfiles.sh moca2012/ZZTo4mu
+./Download-Indexfiles/download-indexfiles.sh moca2012/ZZTo2e2mu
 ```
 
 After a successful download, the indexfiles are located in the directory `Indexfiles` where they are classified according to the data sets
@@ -316,17 +316,17 @@ ls Indexfiles/*/*
 4. Split the indexfiles for the Higgs Monte Carlo samples into smaller files to have batch jobs of reasonable size:
 
 ```
-./Split-Indexfiles/split-sample.sh moca2011/SMHiggsToZZTo4L 5
-./Split-Indexfiles/split-sample.sh moca2012/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/SMHiggsToZZTo4L 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/SMHiggsToZZTo4L 5
 
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2011/ZZTo4mu 5
-
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo2e2mu 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4e 5
-./Split-Indexfiles/split-sample.sh moca2012/ZZTo4mu 5
-```
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2011/ZZTo4mu 5
+			 
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo2e2mu 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4e 5
+./Split-Indexfiles/split-indexfiles.sh moca2012/ZZTo4mu 5
+```			
 
 After splitting, the indexfiles are located in the directory `Indexfiles-Splitted`:
 
@@ -361,20 +361,20 @@ cd ..
 ./Utils/test-production.sh
 ```
 
-6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-output-desy.sh`
+6. The small size of the output files enables to retrieve them locally. This can be done using the script `retrieve-desy-output.sh`
 located in the directory `Utils`. From the directory `h4leptons`you are located in, do the following commands:
 
 ```
-./Utils/retrieve-output-desy.sh moca2011/SMHiggsToZZTo4L
-./Utils/retrieve-output-desy.sh moca2012/SMHiggsToZZTo4L
-
-./Utils/retrieve-output-desy.sh  moca2011/ZZTo2e2mu
-./Utils/retrieve-output-desy.sh moca2011/ZZTo4e
-./Utils/retrieve-output-desy.sh moca2011/ZZTo4mu
-
-./Utils/retrieve-output-desy.sh moca2012/ZZTo2e2mu
-./Utils/retrieve-output-desy.sh moca2012/ZZTo4e
-./Utils/retrieve-output-desy.sh moca2012/ZZTo4mu
+./Utils/retrieve-desy-output.sh moca2011/SMHiggsToZZTo4L
+./Utils/retrieve-desy-output.sh moca2012/SMHiggsToZZTo4L
+		     
+./Utils/retrieve-desy-output.sh moca2011/ZZTo2e2mu
+./Utils/retrieve-desy-output.sh moca2011/ZZTo4e
+./Utils/retrieve-desy-output.sh moca2011/ZZTo4mu
+		     
+./Utils/retrieve-desy-output.sh moca2012/ZZTo2e2mu
+./Utils/retrieve-desy-output.sh moca2012/ZZTo4e
+./Utils/retrieve-desy-output.sh moca2012/ZZTo4mu
 ```
 
 After a successful download, the output files are located in the directory `Output`.
