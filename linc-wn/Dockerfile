@@ -4,7 +4,7 @@ FROM ubuntu:20.04 as builder
 # It lives on the head of its dependencies.
 
 # Install all build-time dependencies
-RUN export DEBIAN_FRONTEND=noninteractive && \ 
+RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         bison \
@@ -13,7 +13,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         casacore-dev \
         cmake \
         flex \
-        gfortran \ 
+        gfortran \
         git \
         libblas-dev \
         libboost-date-time-dev \
@@ -46,77 +46,86 @@ WORKDIR /src
 # Build portable binaries by default
 ARG PORTABLE=TRUE
 
-ARG LOFARSTMAN_VERSION=master
-RUN git clone --depth 1 --branch ${LOFARSTMAN_VERSION} \
+ARG LOFARSTMAN_COMMIT=master
+RUN git clone --no-checkout \
         https://github.com/lofar-astron/LofarStMan && \
     mkdir LofarStMan/build && \
-    cd LofarStMan/build && \
+    cd LofarStMan && git checkout ${LOFARSTMAN_COMMIT} && \
+    cd build && \
     cmake .. -DPORTABLE=${PORTABLE} && \
     make install -j`nproc`
 
-ARG DYSCO_VERSION=master
-RUN git clone --depth 1 --branch ${DYSCO_VERSION} \
+ARG DYSCO_COMMIT=master
+RUN git clone --no-checkout \
         https://github.com/aroffringa/dysco.git && \
     mkdir dysco/build && \
-    cd dysco/build && \
+    cd dysco && git checkout ${DYSCO_COMMIT} && \
+    cd build && \
     cmake .. -DPORTABLE=${PORTABLE} && \
     make install -j`nproc`
-    
-ARG IDG_VERSION=master
-# IDG doesn't work with --depth 1, because it needs all branches to
+
+ARG IDG_COMMIT=master
+# IDG does not work with --depth 1, because it needs all branches to
 # determine its version :-(
-RUN git clone --branch ${IDG_VERSION} \
+RUN git clone  \
         https://git.astron.nl/RD/idg.git && \
     mkdir idg/build && \
-    cd idg/build && \
+    cd idg && git checkout ${IDG_COMMIT} && \
+    cd build && \
     cmake .. && \
     make install -j`nproc`
 
-ARG AOFLAGGER_VERSION=master
-RUN git clone --depth 1 --branch ${AOFLAGGER_VERSION} \
+ARG AOFLAGGER_COMMIT=master
+RUN git clone --no-checkout \
         https://gitlab.com/aroffringa/aoflagger.git && \
     mkdir aoflagger/build && \
-    cd aoflagger/build && \
+    cd aoflagger && git checkout ${AOFLAGGER_COMMIT} && \
+    cd build && \
     cmake .. -DPORTABLE=${PORTABLE} && \
     make install -j`nproc`
 
-ARG LOFARBEAM_VERSION=master
-RUN git clone  --depth 1 --branch ${LOFARBEAM_VERSION} \
+ARG LOFARBEAM_COMMIT=master
+RUN git clone --no-checkout \
         https://github.com/lofar-astron/LOFARBeam.git && \
     mkdir LOFARBeam/build && \
-    cd LOFARBeam/build && \
+    cd LOFARBeam && git checkout ${LOFARBEAM_COMMIT} && \
+    cd build && \
     cmake .. && \
     make install -j`nproc`
 
-ARG EVERYBEAM_VERSION=master
-RUN git clone --depth 1  --branch ${EVERYBEAM_VERSION} \
+ARG EVERYBEAM_COMMIT=master
+RUN git clone --no-checkout \
         https://git.astron.nl/RD/EveryBeam.git && \
     mkdir EveryBeam/build && \
-    cd EveryBeam/build && \
+    cd EveryBeam && git checkout ${EVERYBEAM_COMMIT} && \
+    cd build && \
     cmake .. && \
     make install -j`nproc`
 
-ARG SAGECAL_VERSION=master
-RUN git clone --depth 1 --branch ${SAGECAL_VERSION} \
+ARG SAGECAL_COMMIT=master
+RUN git clone --no-checkout \
         https://github.com/nlesc-dirac/sagecal && \
     mkdir sagecal/build && \
-    cd sagecal/build && \
+    cd sagecal && git checkout ${SAGECAL_COMMIT} && \
+    cd build && \
     cmake .. -DLIB_ONLY=1 && \
     make install -j`nproc`
 
-ARG DP3_VERSION=master
-RUN git clone --depth 1 --branch ${DP3_VERSION} \
+ARG DP3_COMMIT=master
+RUN git clone --no-checkout \
         https://git.astron.nl/RD/DP3.git && \
     mkdir DP3/build && \
-    cd DP3/build && \
+    cd DP3 && git checkout ${DP3_COMMIT} && \
+    cd build && \
     cmake .. -DPORTABLE=${PORTABLE} -DLIBDIRAC_PREFIX=/usr/local/ && \
     make install -j`nproc`
 
-ARG WSCLEAN_VERSION=master
-RUN git clone --depth 1 --branch ${WSCLEAN_VERSION} \
+ARG WSCLEAN_COMMIT=master
+RUN git clone --no-checkout \
         https://gitlab.com/aroffringa/wsclean.git && \
     mkdir wsclean/build && \
-    cd wsclean/build && \
+    cd wsclean && git checkout ${WSCLEAN_COMMIT} && \
+    cd build && \
     cmake .. -DPORTABLE=${PORTABLE} && \
     make install -j`nproc`
 
@@ -129,17 +138,15 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && \
 
 # Install required python packages
 RUN python3 -m pip install --no-cache-dir --upgrade \
-    cwl-runner \
-    cwltool
+    toil[cwl]
 
 # Install current version of LINC. By adding this to the base image
 # we can speed up the build of the final image, because all of LINC's
 # dependencies will have been installed already and (probably) don't need to
 # be updated.
-ARG LINC_VERSION=master
-RUN git clone --depth 1 --branch ${LINC_VERSION} \
-        https://git.astron.nl/RD/LINC.git linc && \
-        python3 -m pip install --no-cache-dir --upgrade ./linc
+COPY . linc
+RUN python3 -m pip install --no-cache-dir --upgrade ./linc
+
 
 #---------------------------------------------------------------------------
 # The image will now be rebuilt without adding the sources, in order to
@@ -153,34 +160,33 @@ RUN chmod +rx /usr/local/bin/*
 SHELL ["/bin/bash", "-c"]
 
 # Set default versions. Can be overridden from the command-line
-ARG LOFARSTMAN_VERSION=master
-ARG DYSCO_VERSION=master
-ARG IDG_VERSION=master
-ARG AOFLAGGER_VERSION=master
-ARG LOFARBEAM_VERSION=master
-ARG EVERYBEAM_VERSION=master
-ARG DP3_VERSION=master
-ARG WSCLEAN_VERSION=master
-ARG LINC_VERSION=master
+ARG LOFARSTMAN_COMMIT=master
+ARG DYSCO_COMMIT=master
+ARG SAGECAL_COMMIT=master
+ARG IDG_COMMIT=master
+ARG AOFLAGGER_COMMIT=master
+ARG LOFARBEAM_COMMIT=master
+ARG EVERYBEAM_COMMIT=master
+ARG DP3_COMMIT=master
+ARG WSCLEAN_COMMIT=master
 
 # Add version information to the metadata of the image
 LABEL \
-    nl.astron.linc.lofarstman.version=${LOFARSTMAN_VERSION} \
-    nl.astron.linc.dysco.version=${DYSCO_VERSION} \
-    nl.astron.linc.idg.version=${IDG_VERSION} \
-    nl.astron.linc.aoflagger.version=${AOFLAGGER_VERSION} \
-    nl.astron.linc.lofarbeam.version=${LOFARBEAM_VERSION} \
-    nl.astron.linc.everybeam.version=${EVERYBEAM_VERSION} \
-    nl.astron.linc.dp3.version=${DP3_VERSION} \
-    nl.astron.linc.wsclean.version=${WSCLEAN_VERSION}
+    nl.astron.linc.lofarstman.version=${LOFARSTMAN_COMMIT} \
+    nl.astron.linc.dysco.version=${DYSCO_COMMIT} \
+    nl.astron.linc.sagecal.version=${SAGECAL_COMMIT} \
+    nl.astron.linc.idg.version=${IDG_COMMIT} \
+    nl.astron.linc.aoflagger.version=${AOFLAGGER_COMMIT} \
+    nl.astron.linc.lofarbeam.version=${LOFARBEAM_COMMIT} \
+    nl.astron.linc.everybeam.version=${EVERYBEAM_COMMIT} \
+    nl.astron.linc.dp3.version=${DP3_COMMIT} \
+    nl.astron.linc.wsclean.version=${WSCLEAN_COMMIT}
 
-# Only install run-time required packages 
+# Only install run-time required packages
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         casacore-tools \
-        davfs2 \
-        git \
         libatkmm-1.6-1v5 \
         libboost-date-time1.71.0 \
         libboost-filesystem1.71.0 \
@@ -233,9 +239,3 @@ RUN git clone --depth 1 --branch ${LINC_VERSION} \
         https://git.astron.nl/RD/LINC.git /tmp/linc && \
         python3 -m pip install --no-cache-dir --upgrade /tmp/linc && \
         rm -rf /tmp/linc
-
-# Mount dcache-demo
-RUN mkdir -pv /mnt && \
-    echo 'https://dcache-demo.desy.de:2443/punch/ /mnt/webdav/ davfs user' >> /etc/fstab && \
-    echo 'EXTRA_GROUPS="davfs"' >> /etc/adduser.conf && \
-    echo 'ADD_EXTRA_GROUPS=1' >> /etc/adduser.conf
