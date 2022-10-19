@@ -144,8 +144,11 @@ RUN python3 -m pip install --no-cache-dir --upgrade \
 # we can speed up the build of the final image, because all of LINC's
 # dependencies will have been installed already and (probably) don't need to
 # be updated.
-COPY . linc
-RUN python3 -m pip install --no-cache-dir --upgrade ./linc
+ARG LINC_COMMIT=master
+RUN git clone --depth 1 --branch ${LINC_COMMIT} \
+        https://git.astron.nl/RD/LINC.git linc && \
+        python3 -m pip install --no-cache-dir --upgrade ./linc
+
 
 
 #---------------------------------------------------------------------------
@@ -187,6 +190,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         casacore-tools \
+        git \
         libatkmm-1.6-1v5 \
         libboost-date-time1.71.0 \
         libboost-filesystem1.71.0 \
@@ -235,7 +239,7 @@ RUN wget -q -O /WSRT_Measures.ztar \
 ENV LINC_DATA_ROOT=/usr/local/share/linc \
     PYTHONPATH=/usr/local/bin
 
-RUN git clone --depth 1 --branch ${LINC_VERSION} \
+RUN git clone --depth 1 --branch ${LINC_COMMIT} \
         https://git.astron.nl/RD/LINC.git /tmp/linc && \
         python3 -m pip install --no-cache-dir --upgrade /tmp/linc && \
         rm -rf /tmp/linc
