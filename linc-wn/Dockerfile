@@ -163,6 +163,7 @@ RUN chmod +rx /usr/local/bin/*
 SHELL ["/bin/bash", "-c"]
 
 # Set default versions. Can be overridden from the command-line
+ARG LINC_COMMIT=master
 ARG LOFARSTMAN_COMMIT=master
 ARG DYSCO_COMMIT=master
 ARG SAGECAL_COMMIT=master
