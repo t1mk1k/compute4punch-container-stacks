@@ -25,7 +25,7 @@ RUN yum -y install condor \
                    ansible \
                    apptainer \
                    tsocks \
-                   openssh.x86_64 \                   
+                   openssh-server.x86_64 \                   
      && yum clean all
 
 # Get a newer Git version to use Git Protocol v2 
@@ -52,7 +52,7 @@ COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig
 COPY singularity_nv_setup.sh /etc/profile.d/singularity_nv_setup.sh
 
 # Tell sshd not to chroot inside the container 
-RUN sed -i 's/UsePrivilegeSeparation sandbox/UsePrivilegeSeparation no/g' /etc/condor/condor_ssh_to_job_sshd_config_template
+RUN sed -i 's/UsePrivilegeSeparation sandbox/UsePrivilegeSeparation no/g' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]
