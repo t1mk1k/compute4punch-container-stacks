@@ -52,7 +52,7 @@ COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig
 COPY singularity_nv_setup.sh /etc/profile.d/singularity_nv_setup.sh
 
 # Tell sshd not to chroot inside the container 
-RUN sed -i 's/UsePrivilegeSeparation sandbox/UsePrivilegeSeparation no/g' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
+RUN sed -i '/^UsePrivilegeSeparation/{h;s/.*/UsePrivilegeSeparation no/g};${x;/^$/{s//UsePrivilegeSeparation no/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]
