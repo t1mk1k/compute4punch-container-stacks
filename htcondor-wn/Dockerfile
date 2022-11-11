@@ -48,8 +48,15 @@ COPY ansible_config /srv/ansible_config
 COPY pilot_execute.sh /srv/pilot_execute.sh
 RUN chmod +x /srv/pilot_execute.sh
 
-COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig
+COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig/ldconfig_wrapper.sh
+COPY condor_xauth_wrapper.sh /usr/local/bin/condor_xauth_wrapper.sh
 COPY singularity_nv_setup.sh /etc/profile.d/singularity_nv_setup.sh
+COPY condor_source_display.sh /etc/profile.d/condor_source_display.sh
+
+RUN chmod +x /usr/local/bin/ldconfig/ldconfig_wrapper.sh
+RUN chmod +x /usr/local/bin/condor_xauth_wrapper.sh
+RUN chmod +x /etc/profile.d/singularity_nv_setup.sh
+RUN chmod +x /etc/profile.d/condor_source_display.sh
 
 # Tell sshd not to chroot inside the container 
 RUN sed -i '/^UsePrivilegeSeparation/{h;s/.*/UsePrivilegeSeparation no/g};${x;/^$/{s//UsePrivilegeSeparation no/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
