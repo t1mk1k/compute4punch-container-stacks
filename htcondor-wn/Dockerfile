@@ -48,13 +48,12 @@ COPY ansible_config /srv/ansible_config
 COPY pilot_execute.sh /srv/pilot_execute.sh
 RUN chmod +x /srv/pilot_execute.sh
 
-COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig/ldconfig_wrapper.sh
-COPY condor_xauth_wrapper.sh /usr/local/bin/condor_xauth_wrapper.sh
+COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig
+COPY condor_xauth_wrapper.sh /usr/local/bin/condor_xauth_wrapper
+
 COPY singularity_nv_setup.sh /etc/profile.d/singularity_nv_setup.sh
 COPY condor_source_display.sh /etc/profile.d/condor_source_display.sh
 
-RUN chmod +x /usr/local/bin/ldconfig/ldconfig_wrapper.sh
-RUN chmod +x /usr/local/bin/condor_xauth_wrapper.sh
 RUN chmod +x /etc/profile.d/singularity_nv_setup.sh
 RUN chmod +x /etc/profile.d/condor_source_display.sh
 
