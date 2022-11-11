@@ -27,4 +27,10 @@ RUN echo "export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch" >> /etc/profile.d/grid_env.sh
 RUN echo "export VO_LHCB_SW_DIR=/cvmfs/lhcb.cern.ch" >> /etc/profile.d/grid_env.sh
 
 COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig
+
 COPY singularity_nv_setup.sh /etc/profile.d/singularity_nv_setup.sh
+RUN chmod +x /etc/profile.d/singularity_nv_setup.sh
+
+# fixes for pts and tty (from Oliver)
+COPY 10-fixup_singularity.sh /etc/profile.d/10-fixup_singularity.sh
+RUN chmod +x /etc/profile.d/10-fixup_singularity.sh
