@@ -6,7 +6,7 @@ SSHD_PID=$$
 SSHD_CNT=0
 while true; do
   IFS= read -r -d '' CMDLINE </proc/${SSHD_PID}/cmdline || [[ $cmdline ]]
-  #echo "Checking ID ${SSHD_PID}, cmdline ${CMDLINE^^}"
+  echo "Checking ID ${SSHD_PID}, cmdline ${CMDLINE^^}" > /tmp/condor_xauth_wrapper.log
   SSHD_MATCHER="^SSHD: "
   if [[ ${CMDLINE^^} =~ ${SSHD_MATCHER} ]]; then
     # We found the sshd!
@@ -18,21 +18,21 @@ while true; do
   SSHD_PID=$(ps -o ppid= -p ${SSHD_PID} | awk '{print $1}')
   if [ ${SSHD_PID} -eq 1 ]; then
     # We arrived at the INIT process, something very wrong... Let's stop and alert the user.
-    echo "Error: Could not determine sshd process, X11 forwarding will not work!"
-    echo "       Please let your admins know you got this error!"
+    echo "Error: Could not determine sshd process, X11 forwarding will not work!" >> /tmp/condor_xauth_wrapper.log
+    echo "       Please let your admins know you got this error!" >> /tmp/condor_xauth_wrapper.log
     exit 0
   fi
 done
-#echo "SSHD PID is ${SSHD_PID}."
+echo "SSHD PID is ${SSHD_PID}." >> /tmp/condor_xauth_wrapper.log
 
 # Find sshd.log, checking through fds.
 FOUND_SSHD_LOG=0
 for FD in $(ls -1 /proc/${SSHD_PID}/fd/); do
   FILE=$(readlink -f /proc/${SSHD_PID}/fd/$FD)
-  #echo "Checking FD $FD, file is $FILE"
+  echo "Checking FD $FD, file is $FILE" >> /tmp/condor_xauth_wrapper.log
   SSHD_LOG_MATCHER="sshd\.log$"
   if [[ "${FILE}" =~ ${SSHD_LOG_MATCHER} ]]; then
-    #echo "Found ${FILE}!"
+    echo "Found ${FILE}!" >> /tmp/condor_xauth_wrapper.log
     FOUND_SSHD_LOG=1
     SSH_TO_JOB_DIR=$(dirname ${FILE})
     JOB_WORKING_DIR=$(dirname ${SSH_TO_JOB_DIR})
@@ -42,8 +42,8 @@ done
 
 if [ ${FOUND_SSHD_LOG} -eq 0 ]; then
   # We could not identify sshd.log, let's stop and alert the user.
-  echo "Error: Could not determine sshd process' (PID: ${SSHD_PID}) log, X11 forwarding will not work!"
-  echo "       Please let your admins know you got this error!"
+  echo "Error: Could not determine sshd process' (PID: ${SSHD_PID}) log, X11 forwarding will not work!" >> /tmp/condor_xauth_wrapper.log
+  echo "       Please let your admins know you got this error!" >> /tmp/condor_xauth_wrapper.log
   exit 0
 fi
 
