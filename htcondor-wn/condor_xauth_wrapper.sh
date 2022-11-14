@@ -1,12 +1,14 @@
 #!/bin/bash
 
+echo "executing script condor_xauth_wrapper.sh" > /tmp/condor_xauth_wrapper.log
+
 # Walk up the process tree until we find the second sshd which rewrites cmdline to "sshd: user@tty".
 # The first sshd is our parent process which does not log itself.
 SSHD_PID=$$
 SSHD_CNT=0
 while true; do
   IFS= read -r -d '' CMDLINE </proc/${SSHD_PID}/cmdline || [[ $cmdline ]]
-  echo "Checking ID ${SSHD_PID}, cmdline ${CMDLINE^^}" > /tmp/condor_xauth_wrapper.log
+  echo "Checking ID ${SSHD_PID}, cmdline ${CMDLINE^^}" >> /tmp/condor_xauth_wrapper.log
   SSHD_MATCHER="^SSHD: "
   if [[ ${CMDLINE^^} =~ ${SSHD_MATCHER} ]]; then
     # We found the sshd!
