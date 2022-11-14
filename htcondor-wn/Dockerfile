@@ -61,7 +61,7 @@ RUN chmod +x /etc/profile.d/display.sh
 RUN sed -i '/^UsePrivilegeSeparation/{h;s/.*/UsePrivilegeSeparation no/g};${x;/^$/{s//UsePrivilegeSeparation no/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
 # Add wrapper for xauth to solve issues related to X11 forwarding
-RUN sed -i '/^XAuthLocation/{h;s/.*/XAuthLocation \/usr\/local\/bin\/condor_xauth_wrapper/g};${x;/^$/{s//XAuthLocation \/usr\/local\/bin\/condor_xauth_wrapper/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
+RUN sed -i '/^XAuthLocation/{h;s/.*/XAuthLocation \/usr\/local\/bin\/xauth/g};${x;/^$/{s//XAuthLocation \/usr\/local\/bin\/xauth/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]
