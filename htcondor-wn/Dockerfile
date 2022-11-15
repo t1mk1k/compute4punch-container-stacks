@@ -49,13 +49,8 @@ COPY ansible_config /srv/ansible_config
 COPY pilot_execute.sh /srv/pilot_execute.sh
 RUN chmod +x /srv/pilot_execute.sh
 
-COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig
 COPY xauth_wrapper.sh /usr/local/bin/xauth
-
-COPY singularity_nv_setup.sh /etc/profile.d/singularity_nv_setup.sh
 COPY display.sh /etc/profile.d/display.sh
-
-RUN chmod +x /etc/profile.d/singularity_nv_setup.sh
 RUN chmod +x /etc/profile.d/display.sh
 
 # Tell sshd not to chroot inside the container 
