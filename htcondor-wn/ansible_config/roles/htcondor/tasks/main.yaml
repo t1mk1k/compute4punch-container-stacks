@@ -1,7 +1,7 @@
 - include: var_lib_dirs.yaml
 - include: config.yaml
 - include: password_auth.yaml
-  when: 
+  when:
     - HTCONDOR_POOL_PASSWORD is defined
 - include: token_auth.yaml
   when:

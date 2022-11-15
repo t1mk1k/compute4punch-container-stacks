@@ -1,5 +1,5 @@
 - name: Create condor config parent directories
-  file: 
+  file:
    path: "{{ item }}"
    recurse: yes
    state: directory

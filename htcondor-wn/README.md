@@ -1,9 +1,9 @@
 # Configurable HTCondor worker node image
 
 This docker image provides a HTCondor worker node which is configurable using
-ansible. HTCondor itself is configured using 
+ansible. HTCondor itself is configured using
 [condor_git_config](https://pypi.org/project/condor_git_config/). Currently
-this image supports HTCondor's pool password and token authentication. 
+this image supports HTCondor's pool password and token authentication.
 
 In order to configure your worker node, you need to create a directory
 containing an yaml containing the supported ansible variables described below.

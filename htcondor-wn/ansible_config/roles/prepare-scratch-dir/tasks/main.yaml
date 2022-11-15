@@ -1,5 +1,5 @@
 - name: Create condor and cloud directories in /scratch
-  file: 
+  file:
    path: "{{ item }}"
    recurse: yes
    state: directory

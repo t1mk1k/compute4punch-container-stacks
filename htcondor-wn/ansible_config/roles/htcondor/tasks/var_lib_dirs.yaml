@@ -1,10 +1,10 @@
 - name: Create condor execute directory
-  file: 
+  file:
    path: /var/lib/condor/execute
    recurse: yes
    state: directory
    mode: "1777"
-   
+
 - name: Create spool directory
   file:
     path: /var/lib/condor/spool/local_univ_execute

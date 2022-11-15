@@ -1,4 +1,4 @@
-- name: Ensure CLOUD_SITE_CONFIG_PATH exists 
+- name: Ensure CLOUD_SITE_CONFIG_PATH exists
   file:
     path: "{{ CLOUD_SITE_CONFIG_PATH }}"
     mode: 0755

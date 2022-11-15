@@ -9,9 +9,9 @@ RUN mkdir -p /scratch/etc/cloud
 RUN mkdir -p /scratch/var/lock/condor
 RUN mkdir -p /scratch/var/run/condor
 
-RUN ln -s /scratch/etc/condor /etc/condor 
-RUN ln -s /scratch/var/log/condor /var/log/condor 
-RUN ln -s /scratch/var/lib/condor /var/lib/condor 
+RUN ln -s /scratch/etc/condor /etc/condor
+RUN ln -s /scratch/var/log/condor /var/log/condor
+RUN ln -s /scratch/var/lib/condor /var/lib/condor
 RUN ln -s /scratch/etc/cloud /etc/cloud
 RUN ln -s /scratch/var/lock/condor /var/lock/condor
 RUN ln -s /scratch/var/run/condor /var/run/condor
@@ -25,11 +25,11 @@ RUN yum -y install condor \
                    ansible \
                    apptainer \
                    tsocks \
-                   openssh-server.x86_64 \ 
+                   openssh-server.x86_64 \
                    xorg-x11-xauth \
      && yum clean all
 
-# Get a newer Git version to use Git Protocol v2 
+# Get a newer Git version to use Git Protocol v2
 RUN yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo-1.10-1.x86_64.rpm \
     && yum-config-manager --disable endpoint \
     && yum -y install --enablerepo endpoint git \
@@ -53,7 +53,7 @@ COPY xauth_wrapper.sh /usr/local/bin/xauth
 COPY display.sh /etc/profile.d/display.sh
 RUN chmod +x /etc/profile.d/display.sh
 
-# Tell sshd not to chroot inside the container 
+# Tell sshd not to chroot inside the container
 RUN sed -i '/^UsePrivilegeSeparation/{h;s/.*/UsePrivilegeSeparation no/g};${x;/^$/{s//UsePrivilegeSeparation no/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
 # Add wrapper for xauth to solve issues related to X11 forwarding
