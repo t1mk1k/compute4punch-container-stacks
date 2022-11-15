@@ -25,7 +25,8 @@ RUN yum -y install condor \
                    ansible \
                    apptainer \
                    tsocks \
-                   openssh-server.x86_64 \                   
+                   openssh-server.x86_64 \ 
+                   xorg-x11-xauth \
      && yum clean all
 
 # Get a newer Git version to use Git Protocol v2 
