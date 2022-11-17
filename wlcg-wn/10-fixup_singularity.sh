@@ -1,6 +1,4 @@
-#!/bin/bash
-
-echo "executing script 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
+echo "sourcing script 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
 
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/1419
 if [ ! -e /dev/fd ]; then
