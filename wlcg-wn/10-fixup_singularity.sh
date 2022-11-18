@@ -45,7 +45,8 @@ fi
 
 # If TERM is dumb, also "upgrade" that to "linux". Seems to happen when using unprivileged sshd + nsenter.
 if [ "x${TERM}" = "xdumb" ]; then
-        echo "TERM is \"dumb\", updated to \"linux\" by 10-fixup_singularity.sh" >> /tmp/condor_10-fixup_singularity.log
+        echo "TERM NOT set to linux" >> /tmp/condor_10-fixup_singularity.log
+        echo "now set by 10-fixup_singularity.sh" >> /tmp/condor_10-fixup_singularity.log
 	echo "" >> /tmp/condor_10-fixup_singularity.log
 	export TERM="linux"
 fi
