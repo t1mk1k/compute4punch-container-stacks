@@ -1,8 +1,6 @@
 FROM centos:7
 LABEL maintainer="Rene Caspart <rene.caspart@kit.edu>, Manuel Giffels <giffels@gmail.com>"
 
-# ENV ENV="/etc/profile" 
-
 RUN yum update -y && yum clean -y all
 RUN yum install -y epel-release \
                    https://linuxsoft.cern.ch/wlcg/centos7/x86_64/wlcg-repo-1.0.0-1.el7.noarch.rpm \

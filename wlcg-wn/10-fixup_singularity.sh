@@ -1,4 +1,5 @@
 echo "sourcing script 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
+echo "" >> /tmp/condor_10-fixup_singularity.log
 
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/1419
 if [ ! -e /dev/fd ]; then
@@ -8,9 +9,20 @@ if [ ! -e /dev/fd ]; then
 	ln -s /proc/self/fd/2 /dev/stderr
 fi
 
+if [ -e /dev/fd ]; then
+  echo "symbolic links properly defined for file descriptors" >> /tmp/condor_10-fixup_singularity.log
+  echo "$(ls -la /dev | grep -E "fd|stdin|stdout|stderr")" >> /tmp/condor_10-fixup_singularity.log
+  echo "" >> /tmp/condor_10-fixup_singularity.log
+fi
+
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/3670
 if [ ! -e /dev/tty -a -e /dev/pts/0 ]; then
 	ln -s /dev/pts/0 /dev/tty
+fi
+
+if [ -e /dev/tty -a -e /dev/pts/0 ]; then
+   echo "symbolic links properly defined for tty" >> /tmp/condor_10-fixup_singularity.log
+   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
 
 # If environment was destroyed, e.g. by changing interpreter (to "script"), fixup things.
@@ -18,6 +30,12 @@ if [ -z "${HOME}" ]; then
 	export HOME=${SINGULARITY_HOME}
 	# Also do a TERM definition only here, only want to do that if we are in a known-broken environment.
 	export TERM="linux"
+fi
+
+if [ ! -z "${HOME}" ]; then
+   echo "HOME = $HOME" >> /tmp/condor_10-fixup_singularity.log
+   echo "TERM = $TERM"  >> /tmp/condor_10-fixup_singularity.log
+   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
 
 # If TERM is dumb, also "upgrade" that to "linux". Seems to happen when using unprivileged sshd + nsenter.
