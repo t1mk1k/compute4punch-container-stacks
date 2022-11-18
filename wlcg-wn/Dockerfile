@@ -1,7 +1,7 @@
 FROM centos:7
 LABEL maintainer="Rene Caspart <rene.caspart@kit.edu>, Manuel Giffels <giffels@gmail.com>"
 
-# ENV ENV="/etc/profile" 
+ENV ENV="/etc/profile" 
 
 RUN yum update -y && yum clean -y all
 RUN yum install -y epel-release \
