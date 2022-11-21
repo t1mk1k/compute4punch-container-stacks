@@ -29,3 +29,6 @@ RUN echo "export VO_LHCB_SW_DIR=/cvmfs/lhcb.cern.ch" >> /etc/profile.d/grid_env.
 # fixes for pts and tty (from Oliver)
 COPY 10-fixup_singularity.sh /etc/profile.d/10-fixup_singularity.sh
 RUN chmod +x /etc/profile.d/10-fixup_singularity.sh
+
+# change permission for /dev/pts
+RUN sed -i '/^devpts/{h;s/.*/devpts \/dev\/pts devpts rw,seclabel,relatime,gid=5,mode=620,ptmxmode=000 0 0/g};${x;/^$/{s//devpts \/dev\/pts devpts rw,seclabel,relatime,gid=5,mode=620,ptmxmode=000 0 0/;H};x}' /etc/mtab
