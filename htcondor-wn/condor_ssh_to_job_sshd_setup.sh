@@ -65,12 +65,12 @@ fi
 
 # inject our shell setup command into authorized keys options
 force_command="${ssh_to_job_shell_setup} ${sshd_dir}/env.sh"
-/bin/echo -n "command=\"${force_command}\" " > "${sshd_dir}/authorized_keys" \
-#  || die "Failed to create ${sshd_dir}/authorized_keys"
-  || save "Failed to create ${sshd_dir}/authorized_keys"
-/bin/cat "${sshkey}.pub" >> "${sshd_dir}/authorized_keys" \
-#  || die "Failed to append ${sshkey}.pub to ${sshd_dir}/authorized_keys."
-  || save "Failed to append ${sshkey}.pub to ${sshd_dir}/authorized_keys."
+/bin/echo -n "command=\"${force_command}\" " > "${sshd_dir}/authorized_keys" || save "Failed to create ${sshd_dir}/authorized_keys"
+# || die "Failed to create ${sshd_dir}/authorized_keys"
+
+/bin/cat "${sshkey}.pub" >> "${sshd_dir}/authorized_keys" || save "Failed to append ${sshkey}.pub to ${sshd_dir}/authorized_keys."
+# || die "Failed to append ${sshkey}.pub to ${sshd_dir}/authorized_keys."
+
 # create sshd_config by substituting into our template
 sshd_config="${sshd_dir}/sshd_config"
 "${SED}" \
@@ -106,9 +106,8 @@ save "condor_ssh_to_job_sshd_setup SSHD DIR END"
 echo "condor_ssh_to_job_sshd_setup PUBLIC SERVER KEY BEGIN"
 save "condor_ssh_to_job_sshd_setup PUBLIC SERVER KEY BEGIN"
 
-/bin/cat "${sshkey}.pub" \
-#  || die "Failed to read ${sshkey}.pub"
-  || save "Failed to read ${sshkey}.pub"
+/bin/cat "${sshkey}.pub" || save "Failed to read ${sshkey}.pub"
+# || die "Failed to read ${sshkey}.pub"
 
 echo "condor_ssh_to_job_sshd_setup PUBLIC SERVER KEY END"
 save "condor_ssh_to_job_sshd_setup PUBLIC SERVER KEY END"
@@ -116,9 +115,8 @@ save "condor_ssh_to_job_sshd_setup PUBLIC SERVER KEY END"
 echo "condor_ssh_to_job_sshd_setup AUTHORIZED CLIENT KEY BEGIN"
 save "condor_ssh_to_job_sshd_setup AUTHORIZED CLIENT KEY BEGIN"
 
-/bin/cat "${sshkey}" \
-#  || die "Failed to read ${sshkey}"
-  || save "Failed to read ${sshkey}"
+/bin/cat "${sshkey}" || save "Failed to read ${sshkey}"
+# || die "Failed to read ${sshkey}"
 
 echo "condor_ssh_to_job_sshd_setup AUTHORIZED CLIENT KEY END"
 save "condor_ssh_to_job_sshd_setup AUTHORIZED CLIENT KEY END"
