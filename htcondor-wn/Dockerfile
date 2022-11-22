@@ -59,5 +59,10 @@ RUN sed -i '/^UsePrivilegeSeparation/{h;s/.*/UsePrivilegeSeparation no/g};${x;/^
 # Add wrapper for xauth to solve issues related to X11 forwarding
 RUN sed -i '/^XAuthLocation/{h;s/.*/XAuthLocation \/usr\/local\/bin\/xauth/g};${x;/^$/{s//XAuthLocation \/usr\/local\/bin\/xauth/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
+
+# add echo in condor_ssh_to_job_sshd_setup
+RUN rm -rf /usr/libexec/condor/condor_ssh_to_job_sshd_setup
+COPY condor_ssh_to_job_sshd_setup.sh /usr/libexec/condor/condor_ssh_to_job_sshd_setup
+
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]

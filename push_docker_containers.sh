@@ -6,7 +6,7 @@ DATE=$(date +%Y%m%d)
 
 for CONTAINER in $CONTAINERS; do
   CONTAINER_NAME=${CONTAINER/\/[Dd]ockerfile/}
-  if [ "$CONTAINER_NAME" == "linc-wn" ] || [ "$CONTAINER_NAME" == "htcondor-wn" ] || [ "$CONTAINER_NAME" == "h4leptons" ]
+  if [ "$CONTAINER_NAME" == "linc-wn" ]
   then
     continue
   fi
