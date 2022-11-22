@@ -79,8 +79,9 @@ sshd_config="${sshd_dir}/sshd_config"
      "s|_INSERT_HOST_KEY_|${sshkey}|g;
       s|_INSERT_AUTHORIZED_KEYS_FILE_|${sshd_dir}/authorized_keys|g;
       s|_INSERT_FORCE_COMMAND_|${force_command}|g"\
-# || die "Failed to create ${sshd_config}"
  || save "Failed to create ${sshd_config}"
+# || die "Failed to create ${sshd_config}"
+
 sshd_user=`/usr/bin/whoami` || save "Failed to run /usr/bin/whoami"
 # || die "Failed to run /usr/bin/whoami"
 
