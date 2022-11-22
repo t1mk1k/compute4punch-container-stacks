@@ -5,7 +5,7 @@ CONTAINERS=$(ls */[Dd]ockerfile)
 
 for CONTAINER in $CONTAINERS; do
   CONTAINER_NAME=${CONTAINER/\/[Dd]ockerfile/}
-  if [ "$CONTAINER_NAME" == "linc-wn" ]
+  if [ "$CONTAINER_NAME" == "linc-wn" ] || [ "$CONTAINER_NAME" == "h4leptons" ]
   then
     continue
   fi
