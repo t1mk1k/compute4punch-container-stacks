@@ -64,13 +64,13 @@ RUN sed -i '/^PermitTTY/{h;s/.*/PermitTTY yes/g};${x;/^$/{s//PermitTTY yes/;H};x
 
 # add echo in condor_ssh_to_job_sshd_setup
 RUN rm -rf /usr/libexec/condor/condor_ssh_to_job_sshd_setup
-RUN chmod +x condor_ssh_to_job_sshd_setup.sh
 COPY condor_ssh_to_job_sshd_setup.sh /usr/libexec/condor/condor_ssh_to_job_sshd_setup
+RUN chmod +x /usr/libexec/condor/condor_ssh_to_job_sshd_setup
 
 # Forcing pseudo terminal for ssh
 RUN rm -rf /usr/libexec/condor/condor_ssh
-RUN chmod +x condor_ssh.sh
 COPY condor_ssh.sh /usr/libexec/condor/condor_ssh
+RUN chmod +x /usr/libexec/condor/condor_ssh
 
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]
