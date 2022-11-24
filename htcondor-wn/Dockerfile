@@ -60,11 +60,17 @@ RUN sed -i '/^UsePrivilegeSeparation/{h;s/.*/UsePrivilegeSeparation no/g};${x;/^
 RUN sed -i '/^XAuthLocation/{h;s/.*/XAuthLocation \/usr\/local\/bin\/xauth/g};${x;/^$/{s//XAuthLocation \/usr\/local\/bin\/xauth/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
 # Add PermitTTY to sshd_config_template
-RUN sed -i '/^PermitTTY/{h;s/.*/PermitTTY no/g};${x;/^$/{s//PermitTTY no/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
+RUN sed -i '/^PermitTTY/{h;s/.*/PermitTTY yes/g};${x;/^$/{s//PermitTTY yes/;H};x}' /usr/lib64/condor/condor_ssh_to_job_sshd_config_template
 
 # add echo in condor_ssh_to_job_sshd_setup
 RUN rm -rf /usr/libexec/condor/condor_ssh_to_job_sshd_setup
 COPY condor_ssh_to_job_sshd_setup.sh /usr/libexec/condor/condor_ssh_to_job_sshd_setup
+RUN chmod +x /usr/libexec/condor/condor_ssh_to_job_sshd_setup
+
+# Forcing pseudo terminal for ssh
+RUN rm -rf /usr/libexec/condor/condor_ssh
+COPY condor_ssh.sh /usr/libexec/condor/condor_ssh
+RUN chmod +x /usr/libexec/condor/condor_ssh
 
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]
