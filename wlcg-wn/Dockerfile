@@ -32,3 +32,6 @@ RUN chmod +x /etc/profile.d/10-fixup_singularity.sh
 
 # change permission for /dev/pts
 RUN sed -i '/^devpts/{h;s/.*/devpts \/dev\/pts devpts rw,seclabel,relatime,gid=5,mode=620,ptmxmode=000 0 0/g};${x;/^$/{s//devpts \/dev\/pts devpts rw,seclabel,relatime,gid=5,mode=620,ptmxmode=000 0 0/;H};x}' /etc/mtab
+
+# suppress tty from /etc/group
+RUN sed -i '/tty/{h;s/.*//g}' /etc/group

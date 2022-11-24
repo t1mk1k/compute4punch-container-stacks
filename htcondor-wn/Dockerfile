@@ -72,5 +72,8 @@ RUN rm -rf /usr/libexec/condor/condor_ssh
 COPY condor_ssh.sh /usr/libexec/condor/condor_ssh
 RUN chmod +x /usr/libexec/condor/condor_ssh
 
+# suppress tty from /etc/group
+RUN sed -i '/tty/{h;s/.*//g}' /etc/group
+
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]
