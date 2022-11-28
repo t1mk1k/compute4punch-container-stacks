@@ -1,9 +1,9 @@
 - name: Add credential store to global gitconfig
-  community.general.git_config:
+  git_config:
     name: credential.helper
     scope: global
     value: "store --file /scratch/.git-credentials"
-  when: 
+  when:
     - GIT_USER is defined
     - GIT_TOKEN is defined
     - HTCONDOR_CONFIG_GIT_REPO is defined
@@ -17,7 +17,7 @@
     src: git-credentials.j2
     dest: "/scratch/.git-credentials"
     mode: 0600
-  when: 
+  when:
     - GIT_USER is defined
     - GIT_TOKEN is defined
     - HTCONDOR_CONFIG_GIT_REPO is defined
