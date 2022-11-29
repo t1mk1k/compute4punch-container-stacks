@@ -1,8 +1,6 @@
-echo "environment variables before sourcing 10-fixup_singularity.sh: " > /tmp/condor_env_before_condor_10-fixup_singularity.log
-echo "$(printenv)" >> /tmp/condor_env_before_condor_10-fixup_singularity.log
-
-echo "sourcing 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
-echo "" >> /tmp/condor_10-fixup_singularity.log
+echo "environment variables before sourcing 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
+echo "TERM = $(TERM)" >> /tmp/condor_10-fixup_singularity.log
+echo "LANG = $(LANG)" >> /tmp/condor_10-fixup_singularity.log
 
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/1419
 if [ ! -e /dev/fd ]; then
@@ -78,5 +76,7 @@ else
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
 
-echo "environment variables after sourcing 10-fixup_singularity.sh: " > /tmp/condor_env_after_condor_10-fixup_singularity.log
-echo "$(printenv)" >> /tmp/condor_env_after_condor_10-fixup_singularity.log
+echo "environment variables after sourcing 10-fixup_singularity.sh" >> /tmp/condor_10-fixup_singularity.log
+echo "TERM = $(TERM)" >> /tmp/condor_10-fixup_singularity.log
+echo "LANG = $(LANG)" >> /tmp/condor_10-fixup_singularity.log
+
