@@ -4,7 +4,6 @@ echo "$(printenv)" >> /tmp/condor_env_before_condor_10-fixup_singularity.log
 echo "sourcing 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
 echo "" >> /tmp/condor_10-fixup_singularity.log
 
-: <<'END'
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/1419
 if [ ! -e /dev/fd ]; then
   echo "symbolic links NOT properly defined for the file descriptors" >> /tmp/condor_10-fixup_singularity.log
@@ -20,9 +19,7 @@ else
   echo "$(ls -la /dev | grep -E "fd|stdin|stdout|stderr")" >> /tmp/condor_10-fixup_singularity.log
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
-END
 
-: <<'END'
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/3670
 if [ ! -e /dev/tty -a -e /dev/pts/0 ]; then
   echo "symbolic links NOT properly defined for tty" >> /tmp/condor_10-fixup_singularity.log
@@ -33,9 +30,7 @@ else
   echo "symbolic links properly defined for tty" >> /tmp/condor_10-fixup_singularity.log
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
-END
 
-: <<'END' 
 # If environment was destroyed, e.g. by changing interpreter (to "script"), fixup things.
 if [ -z "${HOME}" ]; then
   echo "environment NOT properly defined" >> /tmp/condor_10-fixup_singularity.log
@@ -50,17 +45,14 @@ else
   echo "TERM = $TERM"  >> /tmp/condor_10-fixup_singularity.log
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
-END
 
-: <<'END'
 # If TERM is dumb, also "upgrade" that to "linux". Seems to happen when using unprivileged sshd + nsenter.
 if [ "x${TERM}" = "xdumb" ]; then
-        echo "TERM NOT set to linux" >> /tmp/condor_10-fixup_singularity.log
-        echo "now set by 10-fixup_singularity.sh" >> /tmp/condor_10-fixup_singularity.log
-	echo "" >> /tmp/condor_10-fixup_singularity.log
-	export TERM="linux"
+  echo "TERM NOT set to linux" >> /tmp/condor_10-fixup_singularity.log
+  echo "now set by 10-fixup_singularity.sh" >> /tmp/condor_10-fixup_singularity.log
+  echo "" >> /tmp/condor_10-fixup_singularity.log
+  export TERM="linux"
 fi
-END
 
 # If LD_LIBRARY_PATH does not contain the Singularity specific bind mount target, add that.
 # Usually done in /.singularity.d/env/99-base.sh, but we might not have sourced that.
