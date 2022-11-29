@@ -35,6 +35,7 @@ else
 fi
 END
 
+: <<'END' 
 # If environment was destroyed, e.g. by changing interpreter (to "script"), fixup things.
 if [ -z "${HOME}" ]; then
   echo "environment NOT properly defined" >> /tmp/condor_10-fixup_singularity.log
@@ -49,6 +50,7 @@ else
   echo "TERM = $TERM"  >> /tmp/condor_10-fixup_singularity.log
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
+END
 
 # If TERM is dumb, also "upgrade" that to "linux". Seems to happen when using unprivileged sshd + nsenter.
 if [ "x${TERM}" = "xdumb" ]; then
