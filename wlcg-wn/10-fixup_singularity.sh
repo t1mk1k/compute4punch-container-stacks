@@ -52,6 +52,7 @@ else
 fi
 END
 
+: <<'END'
 # If TERM is dumb, also "upgrade" that to "linux". Seems to happen when using unprivileged sshd + nsenter.
 if [ "x${TERM}" = "xdumb" ]; then
         echo "TERM NOT set to linux" >> /tmp/condor_10-fixup_singularity.log
@@ -59,6 +60,7 @@ if [ "x${TERM}" = "xdumb" ]; then
 	echo "" >> /tmp/condor_10-fixup_singularity.log
 	export TERM="linux"
 fi
+END
 
 # If LD_LIBRARY_PATH does not contain the Singularity specific bind mount target, add that.
 # Usually done in /.singularity.d/env/99-base.sh, but we might not have sourced that.
