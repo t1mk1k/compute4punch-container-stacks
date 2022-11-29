@@ -22,6 +22,7 @@ else
 fi
 END
 
+: <<'END'
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/3670
 if [ ! -e /dev/tty -a -e /dev/pts/0 ]; then
   echo "symbolic links NOT properly defined for tty" >> /tmp/condor_10-fixup_singularity.log
@@ -32,6 +33,7 @@ else
   echo "symbolic links properly defined for tty" >> /tmp/condor_10-fixup_singularity.log
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
+END
 
 # If environment was destroyed, e.g. by changing interpreter (to "script"), fixup things.
 if [ -z "${HOME}" ]; then
