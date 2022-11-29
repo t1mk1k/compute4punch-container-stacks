@@ -1,3 +1,6 @@
+echo "environment variables before sourcing 10-fixup_singularity.sh: " > /tmp/condor_env_before_condor_10-fixup_singularity.log
+echo "$(printenv)" >> /tmp/condor_env_before_condor_10-fixup_singularity.log
+
 echo "sourcing 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
 echo "" >> /tmp/condor_10-fixup_singularity.log
 
@@ -74,3 +77,6 @@ else
   echo "LANG already set to en_US.utf8" >> /tmp/condor_10-fixup_singularity.log
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
+
+echo "environment variables after sourcing 10-fixup_singularity.sh: " > /tmp/condor_env_after_condor_10-fixup_singularity.log
+echo "$(printenv)" >> /tmp/condor_env_after_condor_10-fixup_singularity.log
