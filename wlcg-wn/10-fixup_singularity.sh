@@ -4,6 +4,7 @@ echo "$(printenv)" >> /tmp/condor_env_before_condor_10-fixup_singularity.log
 echo "sourcing 10-fixup_singularity.sh" > /tmp/condor_10-fixup_singularity.log
 echo "" >> /tmp/condor_10-fixup_singularity.log
 
+: <<'END'
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/1419
 if [ ! -e /dev/fd ]; then
   echo "symbolic links NOT properly defined for the file descriptors" >> /tmp/condor_10-fixup_singularity.log
@@ -19,6 +20,7 @@ else
   echo "$(ls -la /dev | grep -E "fd|stdin|stdout|stderr")" >> /tmp/condor_10-fixup_singularity.log
   echo "" >> /tmp/condor_10-fixup_singularity.log
 fi
+END
 
 # Dirty hack for issue: https://github.com/sylabs/singularity/issues/3670
 if [ ! -e /dev/tty -a -e /dev/pts/0 ]; then
