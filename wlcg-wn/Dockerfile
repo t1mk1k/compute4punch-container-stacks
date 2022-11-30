@@ -27,5 +27,5 @@ RUN echo "export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch" >> /etc/profile.d/grid_env.sh
 RUN echo "export VO_LHCB_SW_DIR=/cvmfs/lhcb.cern.ch" >> /etc/profile.d/grid_env.sh
 
 # define environment variables HOME and TERM 
-COPY 10-fixup_singularity.sh /etc/profile.d/10-fixup_singularity.sh
-RUN chmod +x /etc/profile.d/10-fixup_singularity.sh
+COPY fix_singularity_env.sh /etc/profile.d/fix_singularity_env.sh
+RUN chmod +x /etc/profile.d/fix_singularity_env.sh
