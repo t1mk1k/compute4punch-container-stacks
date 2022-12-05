@@ -1,169 +1,276 @@
-FROM debian:bullseye as builder
+FROM ubuntu:20.04 as builder
 
-ARG SRC=/usr/local/src
-ARG J=16
-ARG DEBIAN_FRONTEND=noninteractive
+# This Docker image builds the dependencies for the Rapthor pipeline.
+# It lives on the head of its dependencies.
 
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/:/usr/local/idg/lib/
+# Install all build-time dependencies
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get install -y \
+        bison \
+        build-essential \
+        casacore-data \
+        casacore-dev \
+        cmake \
+        flex \
+        gfortran \
+        git \
+        libblas-dev \
+        libboost-date-time-dev \
+        libboost-filesystem-dev \
+        libboost-numpy-dev \
+        libboost-program-options-dev \
+        libboost-python-dev \
+        libboost-system-dev \
+        libboost-test-dev \
+        libcfitsio-dev \
+        libfftw3-dev \
+        libgsl-dev \
+        libgtkmm-3.0-dev \
+        libhdf5-serial-dev \
+        liblapack-dev \
+        liblua5.3-dev \
+        libncurses5-dev \
+        libpng-dev \
+        libpython3-dev \
+        pkg-config \
+        python3 \
+        python3-casacore \
+        python3-numpy \
+        wcslib-dev \
+        wget && \
+    mkdir -p /src
 
-RUN apt-get update && \
-    apt-get install -y emacs htop nano mc \
-    git \
-    wget \
-    rsync \
-    python3-pip \
-    libfftw3-dev \
-    python3-numpy \
-    libfreetype6-dev \
-    libpng-dev \
-    pkg-config \
-    python3-dev \
-    libboost-all-dev \
-    libcfitsio-dev \
-    wcslib-dev \
-    libatlas-base-dev \
-    liblapack-dev \
-    python3-tk \
-    libreadline6-dev \
-    liblog4cplus-dev \
-    libhdf5-dev \
-    libncurses5-dev \
-    libssl-dev \
-    flex \
-    bison \
-    libbison-dev \
-    python3-matplotlib \
-    python3-numexpr \
-    python3-astropy \
-    python3-cpuinfo \
-    python3-future \
-    python3-lxml \
-    python3-pandas \
-    python3-psutil \
-    python3-pyfftw python3-pymysql python3-scipy \
-    python3-requests python3-deap \
-    python3-sshtunnel \
-    python3-ruamel.yaml python3-ephem \
-    ipython3 \
-    libgsl-dev \
-    libgtkmm-3.0-dev \
-    libcfitsio-bin libxml2-dev libarmadillo-dev libsigc++-2.0-dev liblua5.3-dev && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1 && \
-    apt-get install -y casacore-dev casacore-tools python3-casacore cmake curl && \
-    apt-get install -y python3-astlib python3-ipdb python3-nose python3-metaconfig jq util-linux bsdmainutils
+WORKDIR /src
 
-RUN pip3 install pybind11 && \
-    pip3 install dask codex_africanus ephem Polygon3 pyregion terminal pyephem ptyprocess timeout-decorator astroquery && \
-    pip3 install --ignore-installed numpy==1.19.5 && \
-    pip3 install reproject
+# Build portable binaries by default
+ARG PORTABLE=TRUE
 
-RUN pip3 install git+https://github.com/lofar-astron/PyBDSF.git
+ARG LOFARSTMAN_COMMIT=master
+RUN git clone --no-checkout \
+        https://github.com/lofar-astron/LofarStMan && \
+    mkdir LofarStMan/build && \
+    cd LofarStMan && git checkout ${LOFARSTMAN_COMMIT} && \
+    cd build && \
+    cmake .. -DPORTABLE=${PORTABLE} && \
+    make install -j`nproc`
 
-RUN cd $SRC && \
-    git clone -b v4.1.1 https://github.com/lofar-astron/LOFARBeam.git && \
-    cd LOFARBeam && \
-    mkdir build && \
+ARG DYSCO_COMMIT=master
+RUN git clone --no-checkout \
+        https://github.com/aroffringa/dysco.git && \
+    mkdir dysco/build && \
+    cd dysco && git checkout ${DYSCO_COMMIT} && \
+    cd build && \
+    cmake .. -DPORTABLE=${PORTABLE} && \
+    make install -j`nproc`
+
+ARG IDG_COMMIT=master
+# IDG does not work with --depth 1, because it needs all branches to
+# determine its version :-(
+RUN git clone  \
+        https://git.astron.nl/RD/idg.git && \
+    mkdir idg/build && \
+    cd idg && git checkout ${IDG_COMMIT} && \
     cd build && \
     cmake .. && \
-    make -j $J && \
-    make install
+    make install -j`nproc`
 
-RUN cd /usr/local/lib/python3.9/dist-packages && \
-    ln -s /usr/local/lib/python3.9/site-packages/lofar
-
-RUN cd $SRC && \
-    git clone https://github.com/aroffringa/dysco.git && \
-    cd dysco && \
-    git checkout 3fd7a5fd17f3d09db89ad7827c9bdc4febf66eff && \
-    mkdir build && \
+ARG AOFLAGGER_COMMIT=master
+RUN git clone --no-checkout \
+        https://gitlab.com/aroffringa/aoflagger.git && \
+    mkdir aoflagger/build && \
+    cd aoflagger && git checkout ${AOFLAGGER_COMMIT} && \
     cd build && \
-    cmake ../ && \
-    make -j $J && \
-    make install && \
-    cp $SRC/dysco/build/decompress /usr/local/bin/decompress 
+    cmake .. -DPORTABLE=${PORTABLE} && \
+    make install -j`nproc`
 
-RUN cd $SRC && \
-    git clone -b v3.1.0 https://gitlab.com/aroffringa/aoflagger.git && \
-    cd aoflagger  && \
-    mkdir build && \
+ARG LOFARBEAM_COMMIT=master
+RUN git clone --no-checkout \
+        https://github.com/lofar-astron/LOFARBeam.git && \
+    mkdir LOFARBeam/build && \
+    cd LOFARBeam && git checkout ${LOFARBEAM_COMMIT} && \
     cd build && \
     cmake .. && \
-    make -j $J && \
-    make install
+    make install -j`nproc`
 
-RUN cd $SRC && \
-    git clone -b v0.1.3 https://git.astron.nl/RD/EveryBeam.git && \
-    cd EveryBeam && \
-    mkdir build && \
+ARG EVERYBEAM_COMMIT=master
+RUN git clone --no-checkout \
+        https://git.astron.nl/RD/EveryBeam.git && \
+    mkdir EveryBeam/build && \
+    cd EveryBeam && git checkout ${EVERYBEAM_COMMIT} && \
     cd build && \
-    cmake -DBUILD_WITH_PYTHON=On .. && \
-    make -j $J && \
-    make install
+    cmake .. && \
+    make install -j`nproc`
 
-
-RUN cd $SRC && \
-    git clone -b v5.1 https://github.com/lofar-astron/DP3.git && \
-    cd DP3 && \
-    mkdir build && \
+ARG SAGECAL_COMMIT=master
+RUN git clone --no-checkout \
+        https://github.com/nlesc-dirac/sagecal && \
+    mkdir sagecal/build && \
+    cd sagecal && git checkout ${SAGECAL_COMMIT} && \
     cd build && \
-    cmake .. -DCMAKE_PREFIX_PATH=/usr/local/idg && \
-    make -j $J && \
-    make install
+    cmake .. -DLIB_ONLY=1 && \
+    make install -j`nproc`
 
-RUN pip3 install -U tables prettytable pylru emcee astropy_healpix sharedarray
-
-RUN pip3 install losoto
-
-RUN pip3 install pyavm && \
-    pip3 install imageio==2.14.1 && \
-    pip3 install aplpy
-
-RUN cd $SRC && \
-    git clone -b v3.0 https://gitlab.com/aroffringa/wsclean.git && \
-    cd wsclean && \
-    mkdir -p build && \
+ARG DP3_COMMIT=master
+RUN git clone --no-checkout \
+        https://git.astron.nl/RD/DP3.git && \
+    mkdir DP3/build && \
+    cd DP3 && git checkout ${DP3_COMMIT} && \
     cd build && \
-    cmake .. -DCMAKE_PREFIX_PATH=/usr/local/idg && \
-    make -j $J && \
-    make install
+    cmake .. -DPORTABLE=${PORTABLE} -DLIBDIRAC_PREFIX=/usr/local/ && \
+    make install -j`nproc`
 
-RUN cd $SRC && \
-    git clone -b v0.6.0 https://github.com/saopicc/DDFacet.git && \
-    cd DDFacet && \
-    python setup.py install
+ARG WSCLEAN_COMMIT=master
+RUN git clone --no-checkout \
+        https://gitlab.com/aroffringa/wsclean.git && \
+    mkdir wsclean/build && \
+    cd wsclean && git checkout ${WSCLEAN_COMMIT} && \
+    cd build && \
+    cmake .. -DPORTABLE=${PORTABLE} && \
+    make install -j`nproc`
 
-RUN cd $SRC && \
-    git clone -b v3.0.1 https://github.com/saopicc/killMS.git && \
-    cd killMS && \
-    python setup.py install
+# Do not use `pip` from the Debian repository, but fetch it from PyPA.
+# This way, we are sure that the latest versions of `pip`, `setuptools`, and
+# `wheel` are installed in /usr/local, the only directory we're going to copy
+# over to the next build stage.
+RUN wget https://bootstrap.pypa.io/get-pip.py && \
+    python3 get-pip.py
 
-RUN cd $SRC && \
-    git clone https://github.com/cyriltasse/DynSpecMS.git
+ARG DDFACET_COMMIT=v0.7.2  # DDFacet
+RUN git clone --no-checkout \
+        https://github.com/saopicc/DDFacet.git && \
+    cd DDFacet && git checkout ${DDFACET_COMMIT} && \
+    rm -v setup.cfg && python3 -m pip install --no-cache-dir --upgrade .
+    #python3 setup.py install#
 
-RUN cd $SRC && \
-    git clone https://github.com/mhardcastle/lotss-query.git
+ARG KILLMS_COMMIT=v3.1.0  # KillMS
+RUN git clone --no-checkout \
+        https://github.com/saopicc/killMS.git && \
+    cd killMS && git checkout ${KILLMS_COMMIT} && \
+    rm -v setup.cfg && python3 -m pip install --no-cache-dir --upgrade .
 
-RUN cd $SRC && \
-    git clone https://github.com/mhardcastle/lotss-hba-survey.git
+ARG LINC_COMMIT=master # LINC
+RUN git clone --no-checkout \
+        https://git.astron.nl/RD/LINC.git && \
+    cd LINC && git checkout ${LINC_COMMIT} && \
+    python3 -m pip install --no-cache-dir --upgrade .
 
-RUN cd $SRC && \
-    git clone https://github.com/mhardcastle/ddf-pipeline.git  && \
-    ddf-pipeline/scripts/install.sh
+ARG DDFPIPELINE_COMMIT=master
+RUN git clone --depth 1 --branch ${DDFPIPELINE_COMMIT} \
+        https://github.com/mhardcastle/ddf-pipeline.git && \
+        cp -rv ddf-pipeline/scripts/*.py /usr/local/bin/. && \
+        cp -rv ddf-pipeline/utils/*.py /usr/local/lib/python3.8/dist-packages/.
 
-RUN cd /usr/local/src && \
-    wget https://rclone.org/install.sh && \
-    bash install.sh
+ARG LOTSSQUERY_COMMIT=master
+RUN git clone --depth 1 --branch ${LOTSSQUERY_COMMIT} \
+        https://github.com/mhardcastle/lotss-query.git && \
+        cp -rv lotss-query/*.py /usr/local/bin/.
 
-RUN cd /usr/local/src && \
-    git clone https://github.com/sara-nl/SpiderScripts.git && \
-    cd SpiderScripts && \
-    cp ada/ada /usr/local/bin
+#---------------------------------------------------------------------------
+# The image will now be rebuilt without adding the sources, in order to
+# reduce the size of the image.
+#---------------------------------------------------------------------------
+FROM ubuntu:20.04 as runner
 
-RUN pip3 list --format=columns
+COPY --from=builder /usr/local /usr/local
+RUN chmod +rx /usr/local/bin/*
 
-RUN pip3 cache purge && \
-    apt-get -y autoremove && \
+SHELL ["/bin/bash", "-c"]
+
+# Set default versions. Can be overridden from the command-line
+ARG LOFARSTMAN_COMMIT=master
+ARG DYSCO_COMMIT=master
+ARG SAGECAL_COMMIT=master
+ARG IDG_COMMIT=master
+ARG AOFLAGGER_COMMIT=master
+ARG LOFARBEAM_COMMIT=master
+ARG EVERYBEAM_COMMIT=master
+ARG DP3_COMMIT=master
+ARG WSCLEAN_COMMIT=master
+ARG DDFACET_COMMIT=v0.7.2
+ARG KILLMS_COMMIT=v3.1.0
+ARG LINC_COMMIT=master
+ARG DYNSPECMS_COMMIT=master
+ARG DDFPIPELINE_COMMIT=master
+
+# Add version information to the metadata of the image
+LABEL \
+    nl.astron.linc.lofarstman.version=${LOFARSTMAN_COMMIT} \
+    nl.astron.linc.dysco.version=${DYSCO_COMMIT} \
+    nl.astron.linc.sagecal.version=${SAGECAL_COMMIT} \
+    nl.astron.linc.idg.version=${IDG_COMMIT} \
+    nl.astron.linc.aoflagger.version=${AOFLAGGER_COMMIT} \
+    nl.astron.linc.lofarbeam.version=${LOFARBEAM_COMMIT} \
+    nl.astron.linc.everybeam.version=${EVERYBEAM_COMMIT} \
+    nl.astron.linc.dp3.version=${DP3_COMMIT} \
+    nl.astron.linc.wsclean.version=${WSCLEAN_COMMIT} \
+    nl.astron.linc.ddfacet.version=${DDFACET_COMMIT} \
+    nl.astron.linc.killms.version=${KILLMS_COMMIT} \
+    nl.astron.linc.linc.version=${LINC_COMMIT}
+
+# Only install run-time required packages
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get install -y \
+        casacore-tools \
+        git \
+        libatkmm-1.6-1v5 \
+        libboost-date-time1.71.0 \
+        libboost-filesystem1.71.0 \
+        libboost-program-options1.71.0 \
+        libboost-python1.71.0 \
+        libcairomm-1.0-1v5 \
+        libcasa-casa4 \
+        libcasa-fits4 \
+        libcasa-measures4 \
+        libcasa-ms4 \
+        libcasa-python3-4 \
+        libcasa-scimath4 \
+        libcasa-tables4 \
+        libcfitsio8 \
+        libfftw3-double3 \
+        libfftw3-single3 \
+        libglibmm-2.4-1v5 \
+        libgomp1 \
+        libgsl23 \
+        libgtkmm-3.0-1v5 \
+        libhdf5-103 \
+        libhdf5-cpp-103 \
+        liblapack3 \
+        liblua5.3-0 \
+        libpangomm-1.4-1v5 \
+        libpng16-16 \
+        libpython3.8 \
+        libsigc++-2.0-0v5 \
+        libstdc++6 \
+        nodejs \
+        python3 \
+        python3-casacore \
+        python3-distutils \
+        python3-pymysql \
+        python3-requests \
+        python3-sshtunnel \
+        rsync \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 
-RUN bash -c "rm -rf /usr/local/src/{DP3,EveryBeam,LOFARBeam,aoflagger,dysco,idg,wsclean,PyBDSF,SpiderScripts}/" && \
-    ln -s /usr/local/bin/DPPP /usr/local/bin/DP3
+# Install WSRT Measures (extra casacore data)
+# Note: The file on the ftp site is updated daily. When warnings regarding leap
+# seconds appear, ignore them or regenerate the docker image.
+RUN wget -q -O /WSRT_Measures.ztar \
+        ftp://ftp.astron.nl/outgoing/Measures/WSRT_Measures.ztar && \
+    cd /var/lib/casacore/data && \
+    tar xfz /WSRT_Measures.ztar && \
+    rm /WSRT_Measures.ztar
+
+# Try to run the compiled tools to make sure they run without
+# a problem (e.g. no missing libraries).
+
+RUN aoflagger --version && \
+    DP3 --version && \
+    wsclean --version && \
+    DDF.py --version && \
+    kMS.py --version && \
+    ln -s /usr/bin/python3 /usr/bin/python
+  
+ENV PYTHONPATH=/usr/local/bin
