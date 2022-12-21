@@ -1,31 +1,33 @@
-image: docker:stable
-
-services:
-  - docker:dind
-
 stages:
+  - setup
   - build
-  - push
+  - deploy
 
-variables:
-  DOCKER_TLS_CERTDIR: "/certs"
+docker-setup:
+  image: docker:stable
+  services:
+    - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker version
+    - apk add bash
+    - apk add gettext
+  stage: setup
+  script:
+    - docker system prune -f
+    - ./generate_config.sh
+  artifacts:
+    paths:
+      - generated-config.yaml
 
-before_script:
-  - docker version
-  - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
-  - apk add bash
-
-after_script:
-  - docker logout $CI_REGISTRY
-
-docker-build:
+docker-build-trigger:
   stage: build
-  script:
-    - ./build_docker_containers.sh
-
-docker-push:
-  stage: push
-  script:
-    - ./push_docker_containers.sh
-  only:
-    - main
+  trigger:
+    include:
+      - local: .gitlab-ci-docker-setup.yaml
+      - artifact: generated-config.yaml
+        job: docker-setup
+    strategy: depend
+  needs:
+    - docker-setup
