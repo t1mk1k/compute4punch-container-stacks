@@ -5,10 +5,6 @@ CONTAINERS=$(ls */[Dd]ockerfile)
 
 for CONTAINER in $CONTAINERS; do
   CONTAINER_NAME=${CONTAINER/\/[Dd]ockerfile/}
-  if [ "$CONTAINER_NAME" == "linc-wn" ]
-  then
-    continue
-  fi
   docker pull $CI_REGISTRY_IMAGE/$CONTAINER_NAME:latest || true
   docker build \
       --pull \
