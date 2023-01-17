@@ -19,7 +19,7 @@ RUN docker-apt-install chgcentre
 RUN apt-get update && apt-get -y install wget xz-utils git pip python-is-python3
 
 #Install snakemake via pip
-RUN pip3 install snakemake pyyaml astropy
+RUN pip3 install snakemake==7.19.1 pyyaml astropy>=5.0
 
 #Change user to "user"
 USER player1
