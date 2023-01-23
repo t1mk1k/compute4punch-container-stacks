@@ -42,6 +42,9 @@ RUN rm casa-6.5.2-26-py3.8.tar.xz
 #Git clone arcane suite
 RUN git clone -b PUNCH_dim_test https://github.com/rstofi/arcane_suite.git
 
+#Set specific commit
+RUN git checkout d128c7fe34ed22d46147811a7c0cb4ea45b7a327
+
 #Change folder to the arcane_suite
 WORKDIR /home/player1/arcane_suite
 
