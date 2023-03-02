@@ -2,6 +2,7 @@ FROM python:3.10-alpine
 LABEL maintainer="Manuel Giffels <giffels@gmail.com>"
 
 RUN apk add --no-cache bash
+RUN apk add --no-cache apptainer --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/
 RUN apk add --no-cache --virtual .build_deps \
              build-base \
              linux-headers \
