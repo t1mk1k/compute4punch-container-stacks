@@ -31,4 +31,4 @@ RUN make -C ./builddir install
 RUN pip install -U pip setuptools wheel
 
 #Install caracal
-RUN pip install -U caracal
+RUN pip install -U caracal==1.0.6
