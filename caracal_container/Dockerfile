@@ -32,3 +32,6 @@ RUN pip install -U pip setuptools wheel
 
 #Install caracal
 RUN pip install -U caracal==1.0.6
+
+#Change line
+RUN sed -i "/^USER*/c\USER = os.getlogin()" /usr/local/lib/python3.8/site-packages/stimela/__init__.py
