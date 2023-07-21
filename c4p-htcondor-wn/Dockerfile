@@ -16,6 +16,9 @@ RUN ln -s /scratch/etc/cloud /etc/cloud
 RUN ln -s /scratch/var/lock/condor /var/lock/condor
 RUN ln -s /scratch/var/run/condor /var/run/condor
 
+RUN rpm --import http://research.cs.wisc.edu/htcondor/yum/RPM-GPG-KEY-HTCondor
+RUN yum install -y https://research.cs.wisc.edu/htcondor/repo/10/10.x/el7/release/condor-10.6.0-1.el7.x86_64.rpm
+
 RUN yum -y install deltarpm
 RUN yum -y install epel-release && yum clean all
 RUN yum -y install python36 \
