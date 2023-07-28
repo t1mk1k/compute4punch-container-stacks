@@ -3,10 +3,8 @@
 #Start from python image
 FROM python:3.8.16-slim-bullseye
 
-#Update apt-get and install useful packages: build-essential for caracal, the rest for singularity
-RUN apt-get update && apt-get -y install build-essential manpages-dev build-essential uuid-dev \
-                        libgpgme-dev squashfs-tools libseccomp-dev wget pkg-config git cryptsetup-bin \
-                         xz-utils && apt-get clean
+#Update apt-get and install useful packages: build-essential for caracal, the rest for singularity 
+RUN apt-get update && apt-get -y install build-essential manpages-dev build-essential uuid-dev libgpgme-dev squashfs-tools libseccomp-dev wget pkg-config git cryptsetup-bin xz-utils && apt-get clean
 
 #Install Go
 ENV VERSION=1.20.3 OS=linux ARCH=amd64
@@ -21,7 +19,7 @@ RUN wget -O - https://github.com/hpcng/singularity/releases/download/v${VERSION}
 WORKDIR /singularity-${VERSION}
 
 #Install singularity
-RUN ./mconfig --without-suid
+RUN ./mconfig --without-suid 
 RUN make -C ./builddir
 RUN make -C ./builddir install
 
@@ -32,4 +30,5 @@ RUN pip install --no-cache-dir -U pip setuptools wheel
 RUN pip install --no-cache-dir -U caracal==1.0.6
 
 #Force re-install of stimela
-RUN pip install --no-cache-dir -U --force-reinstall git+https://github.com/ratt-ru/Stimela.git
+#RUN pip install --no-cache-dir -U --force-reinstall git+https://github.com/ratt-ru/Stimela.git
+RUN pip install --no-cache-dir -U --force-reinstall git+https://github.com/adrabent/Stimela.git@patch-1
