@@ -1,2 +1,0 @@
-CLOUD_SITE_CONFIG_PATH: "/etc/cloud/"
-CLOUD_SITE_ID_FILE: "{{ CLOUD_SITE_CONFIG_PATH }}/site-id.cfg"
