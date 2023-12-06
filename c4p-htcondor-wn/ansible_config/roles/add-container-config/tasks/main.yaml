@@ -1,0 +1,6 @@
+- name: Include all .yaml and .yml files in /srv/config/
+  include_vars:
+    dir: /srv/config
+    extensions:
+      - 'yaml'
+      - 'yml'
