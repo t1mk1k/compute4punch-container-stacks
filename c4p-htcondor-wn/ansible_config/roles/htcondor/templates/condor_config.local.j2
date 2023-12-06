@@ -1,0 +1,1 @@
+include command : condor-git-config  {{ HTCONDOR_CONFIG_GIT_REPO }} --cache-path {{ HTCONDOR_CONFIG_GIT_CACHE_PATH | default("/etc/condor/config.git/") }} --blacklist .*-cloud\.cfg --whitelist @{{ CLOUD_SITE_ID_FILE }}

@@ -1,4 +1,4 @@
-FROM rockylinux:8
+FROM centos:7
 LABEL maintainer="Manuel Giffels <giffels@gmail.com>"
 
 # Create links to point to scratch directory
@@ -16,28 +16,26 @@ RUN ln -s /scratch/etc/cloud /etc/cloud
 RUN ln -s /scratch/var/lock/condor /var/lock/condor
 RUN ln -s /scratch/var/run/condor /var/run/condor
 
-RUN rpm --import http://research.cs.wisc.edu/htcondor/yum/RPM-GPG-KEY-HTCondor
-RUN dnf install -y https://research.cs.wisc.edu/htcondor/repo/10/10.0/htcondor-release-current.el8.noarch.rpm
-
-RUN dnf -y install epel-release && dnf clean all
-RUN dnf config-manager --set-enabled powertools
-RUN dnf -y install condor \
-                   python39 \
+RUN yum -y install deltarpm
+RUN yum -y install epel-release && yum clean all
+RUN yum -y install python36 \
                    ansible \
                    apptainer \
+                   tsocks \
                    openssh-server.x86_64 \
                    xorg-x11-xauth \
-                   langpacks-en \
-                   glibc-langpack-en \
-     && dnf clean all
+     && yum clean all
 
 # Get a newer Git version to use Git Protocol v2
-RUN dnf -y install https://packages.endpointdev.com/rhel/8/main/x86_64/endpoint-repo.noarch.rpm \
-    && dnf config-manager --disable endpoint \
-    && dnf -y install --enablerepo endpoint git \
-    && dnf clean all
+RUN yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo-1.10-1.x86_64.rpm \
+    && yum-config-manager --disable endpoint \
+    && yum -y install --enablerepo endpoint git \
+    && yum clean all
 
-RUN python3.9 -m pip install --no-cache-dir condor_git_config pexpect
+RUN git clone -b devel https://github.com/benoitroland/C4P-HTCondor.git
+RUN ./C4P-HTCondor/install-c4p-htcondor-docker.sh
+
+RUN python3.6 -m pip install --no-cache-dir condor_git_config pexpect
 
 # Add ansible community collection
 RUN ansible-galaxy collection install community.general -p /usr/share/ansible/collections
@@ -57,10 +55,8 @@ RUN sed -i '/^UsePrivilegeSeparation/{h;s/.*/UsePrivilegeSeparation no/g};${x;/^
 # To close ssh session: suppress tty from /etc/group
 RUN sed -i '/tty/d' /etc/group
 
-# Set language settings, ansible otherwise complains
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+# curl environment 
+RUN echo "export X509_CERT_DIR=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/etc/grid-security-emi/certificates" > /etc/profile.d/curl_env.sh
 
 WORKDIR /scratch
 ENTRYPOINT ["/tini", "-s", "--", "/srv/pilot_execute.sh"]

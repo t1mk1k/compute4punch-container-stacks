@@ -1,0 +1,12 @@
+docker-build-$CONTAINER_NAME:
+  stage: build
+  script:
+    - ./build_docker_containers.sh $CONTAINER_NAME
+docker-deploy-$CONTAINER_NAME:
+  stage: deploy
+  script:
+    - ./push_docker_containers.sh $CONTAINER_NAME
+  only:
+    - main
+  needs:
+    - docker-build-$CONTAINER_NAME

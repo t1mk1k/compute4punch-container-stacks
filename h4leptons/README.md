@@ -290,7 +290,7 @@ cd $HOME/H4leptons
 git clone https://gitlab-p4n.aip.de/compute4punch/container-stacks.git
 ```
 
-3. Download the indexfiles corresponding to the Higgs Monte Carlo samples for 2011 and 2012:
+3. Download the indexfiles corresponding to the Higgs and ZZ Monte Carlo samples for 2011 and 2012:
 
 ```
 cd container-stacks/h4leptons
@@ -313,7 +313,7 @@ and Monte Carlo for 2011 and 2012. The data sets are divided into run periods, t
 ls Indexfiles/*/*
 ```
 
-4. Split the indexfiles for the Higgs Monte Carlo samples into smaller files to have batch jobs of reasonable size:
+4. Split the indexfiles for the Higgs and ZZ Monte Carlo samples into smaller files to have batch jobs of reasonable size:
 
 ```
 ./Split-Indexfiles/split-indexfiles.sh moca2011/SMHiggsToZZTo4L 5
@@ -339,9 +339,6 @@ ls Indexfiles-Splitted/*/*
 ```
 cd Submission
 ./submit-analysis.sh moca2011/SMHiggsToZZTo4L prod
-```
-
-```
 ./submit-analysis.sh moca2012/SMHiggsToZZTo4L prod
 
 ./submit-analysis.sh moca2011/ZZTo2e2mu prod

@@ -6,7 +6,7 @@ RUN yum install -y epel-release \
                    https://linuxsoft.cern.ch/wlcg/centos7/x86_64/wlcg-repo-1.0.0-1.el7.noarch.rpm \
                    http://repository.egi.eu/sw/production/umd/4/centos7/x86_64/updates/umd-release-4.1.3-1.el7.centos.noarch.rpm
 RUN yum update -y
-RUN yum install -y apptainer cvmfs HEP_OSlibs wn tcsh && \
+RUN yum install -y apptainer cvmfs HEP_OSlibs wn tcsh openssh-server.x86_64 xorg-x11-xauth python3 davix && \
     yum clean -y all
 
 # Fix for broken dcache-srmclient-6.2.24-1.noarch
@@ -26,5 +26,6 @@ RUN echo "export VO_BELLE_SW_DIR=/cvmfs/belle.cern.ch/sl6" >> /etc/profile.d/gri
 RUN echo "export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch" >> /etc/profile.d/grid_env.sh
 RUN echo "export VO_LHCB_SW_DIR=/cvmfs/lhcb.cern.ch" >> /etc/profile.d/grid_env.sh
 
-COPY ldconfig_wrapper.sh /usr/local/bin/ldconfig
-COPY singularity_nv_setup.sh /etc/profile.d/singularity_nv_setup.sh
+# define environment variables HOME and TERM 
+COPY fix_singularity_env.sh /etc/profile.d/fix_singularity_env.sh
+RUN chmod +x /etc/profile.d/fix_singularity_env.sh
