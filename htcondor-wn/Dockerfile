@@ -17,7 +17,7 @@ RUN ln -s /scratch/var/lock/condor /var/lock/condor
 RUN ln -s /scratch/var/run/condor /var/run/condor
 
 RUN rpm --import http://research.cs.wisc.edu/htcondor/yum/RPM-GPG-KEY-HTCondor
-RUN dnf install -y https://research.cs.wisc.edu/htcondor/repo/10/10.0/htcondor-release-current.el8.noarch.rpm
+RUN dnf install -y https://research.cs.wisc.edu/htcondor/repo/23.0/el8/x86_64/release/htcondor-release-23.0-1.el8.noarch.rpm
 
 RUN dnf -y install epel-release && dnf clean all
 RUN dnf config-manager --set-enabled powertools
@@ -25,7 +25,7 @@ RUN dnf -y install condor \
                    python39 \
                    ansible \
                    apptainer \
-                   openssh-server.x86_64 \
+                   openssh-server \
                    xorg-x11-xauth \
                    langpacks-en \
                    glibc-langpack-en \
