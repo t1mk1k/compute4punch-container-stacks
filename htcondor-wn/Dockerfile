@@ -17,13 +17,7 @@ RUN ln -s /scratch/var/lock/condor /var/lock/condor
 RUN ln -s /scratch/var/run/condor /var/run/condor
 
 RUN rpm --import http://research.cs.wisc.edu/htcondor/yum/RPM-GPG-KEY-HTCondor
-# RUN dnf install -y https://research.cs.wisc.edu/htcondor/repo/23.x/el8/x86_64/release/htcondor-release-23.x-1.el8.noarch.rpm
-
-### last version with SSL working
-# RUN dnf install -y https://research.cs.wisc.edu/htcondor/repo/23.x/el8/x86_64/release/condor-23.1.0-1.el8.x86_64.rpm
-
-### version with SSL change (https://htcondor.readthedocs.io/en/latest/version-history/feature-versions-23-x.html)
-RUN dnf install -y https://research.cs.wisc.edu/htcondor/repo/23.x/el8/x86_64/release/condor-23.2.0-1.el8.x86_64.rpm
+RUN dnf install -y https://research.cs.wisc.edu/htcondor/repo/23.x/el8/x86_64/release/htcondor-release-23.x-1.el8.noarch.rpm
 
 RUN dnf -y install epel-release && dnf clean all
 RUN dnf config-manager --set-enabled powertools
