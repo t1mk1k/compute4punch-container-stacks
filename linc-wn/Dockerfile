@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as builder
+FROM ubuntu:22.04 as builder
 
 # This Docker image builds the dependencies for the Rapthor pipeline.
 # It lives on the head of its dependencies.
@@ -37,6 +37,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         python3 \
         python3-casacore \
         python3-numpy \
+        python3-pip \
         wcslib-dev \
         wget && \
     mkdir -p /src
@@ -67,7 +68,7 @@ RUN git clone --no-checkout \
 ARG IDG_COMMIT=master
 # IDG does not work with --depth 1, because it needs all branches to
 # determine its version :-(
-RUN git clone  \
+RUN git clone --recurse-submodules \
         https://git.astron.nl/RD/idg.git && \
     mkdir idg/build && \
     cd idg && git checkout ${IDG_COMMIT} && \
@@ -93,9 +94,11 @@ RUN git clone --no-checkout \
     cmake .. && \
     make install -j`nproc`
 
+# added pip install cmake to get the newest cmake for Everybeam
 ARG EVERYBEAM_COMMIT=master
 RUN git clone --no-checkout \
         https://git.astron.nl/RD/EveryBeam.git && \
+    python3 -m pip install --upgrade cmake && \
     mkdir EveryBeam/build && \
     cd EveryBeam && git checkout ${EVERYBEAM_COMMIT} && \
     cd build && \
@@ -133,11 +136,12 @@ RUN git clone --no-checkout \
 # This way, we are sure that the latest versions of `pip`, `setuptools`, and
 # `wheel` are installed in /usr/local, the only directory we're going to copy
 # over to the next build stage.
-RUN wget https://bootstrap.pypa.io/get-pip.py && \
+RUN wget -q https://bootstrap.pypa.io/get-pip.py && \
     python3 get-pip.py
 
 # Install required python packages
 RUN python3 -m pip install --no-cache-dir --upgrade \
+    nodejs-wheel \
     toil[cwl]
 
 # Install current version of LINC. By adding this to the base image
@@ -150,12 +154,11 @@ RUN git clone --depth 1 --branch ${LINC_COMMIT} \
         python3 -m pip install --no-cache-dir --upgrade ./linc
 
 
-
 #---------------------------------------------------------------------------
 # The image will now be rebuilt without adding the sources, in order to
 # reduce the size of the image.
 #---------------------------------------------------------------------------
-FROM ubuntu:20.04 as runner
+FROM ubuntu:22.04 as runner
 
 COPY --from=builder /usr/local /usr/local
 RUN chmod +rx /usr/local/bin/*
@@ -191,40 +194,43 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         casacore-tools \
+        gdb \
         git \
         libatkmm-1.6-1v5 \
-        libboost-date-time1.71.0 \
-        libboost-filesystem1.71.0 \
-        libboost-program-options1.71.0 \
-        libboost-python1.71.0 \
+        libblas3 \
+        libboost-filesystem1.74.0 \
+        libboost-program-options1.74.0 \
+        libboost-python1.74.0 \
         libcairomm-1.0-1v5 \
-        libcasa-casa4 \
-        libcasa-fits4 \
-        libcasa-measures4 \
-        libcasa-ms4 \
-        libcasa-python3-4 \
-        libcasa-scimath4 \
-        libcasa-tables4 \
-        libcfitsio8 \
+        libcasa-casa6 \
+        libcasa-fits6 \
+        libcasa-measures6 \
+        libcasa-ms6 \
+        libcasa-python3-6 \
+        libcasa-scimath6 \
+        libcasa-tables6 \
+        libcfitsio9 \
         libfftw3-double3 \
         libfftw3-single3 \
+        libgfortran5 \
+        libglib2.0-0 \
         libglibmm-2.4-1v5 \
         libgomp1 \
-        libgsl23 \
+        libgsl27 \
         libgtkmm-3.0-1v5 \
-        libhdf5-103 \
-        libhdf5-cpp-103 \
+        libhdf5-103-1 \
+        libhdf5-cpp-103-1 \
         liblapack3 \
         liblua5.3-0 \
         libpangomm-1.4-1v5 \
         libpng16-16 \
-        libpython3.8 \
+        libpython3.10 \
         libsigc++-2.0-0v5 \
         libstdc++6 \
-        nodejs \
         python3 \
         python3-casacore \
         python3-distutils \
+        rsync \
         wget && \
     rm -rf /var/lib/apt/lists/*
 
