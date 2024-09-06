@@ -194,6 +194,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
         casacore-tools \
+        curl \
         gdb \
         git \
         libatkmm-1.6-1v5 \
