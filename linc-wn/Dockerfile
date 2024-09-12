@@ -47,7 +47,7 @@ WORKDIR /src
 # Build portable binaries by default
 ARG TARGET_CPU=haswell
 
-ARG LOFARSTMAN_COMMIT=master
+ARG LOFARSTMAN_COMMIT=main
 RUN git clone --no-checkout \
         https://github.com/lofar-astron/LofarStMan && \
     mkdir LofarStMan/build && \
@@ -167,7 +167,7 @@ SHELL ["/bin/bash", "-c"]
 
 # Set default versions. Can be overridden from the command-line
 ARG LINC_COMMIT=master
-ARG LOFARSTMAN_COMMIT=master
+ARG LOFARSTMAN_COMMIT=main
 ARG DYSCO_COMMIT=master
 ARG SAGECAL_COMMIT=master
 ARG IDG_COMMIT=master
