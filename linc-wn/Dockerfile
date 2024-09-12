@@ -148,8 +148,10 @@ RUN python3 -m pip install --no-cache-dir --upgrade \
 # we can speed up the build of the final image, because all of LINC's
 # dependencies will have been installed already and (probably) don't need to
 # be updated.
-COPY . linc
-RUN python3 -m pip install --no-cache-dir --upgrade ./linc
+ARG LINC_COMMIT=master
+RUN git clone --depth 1 --branch ${LINC_COMMIT} \
+        https://git.astron.nl/RD/LINC.git linc && \
+        python3 -m pip install --no-cache-dir --upgrade ./linc
 
 
 #---------------------------------------------------------------------------
@@ -164,6 +166,7 @@ RUN chmod +rx /usr/local/bin/*
 SHELL ["/bin/bash", "-c"]
 
 # Set default versions. Can be overridden from the command-line
+ARG LINC_COMMIT=master
 ARG LOFARSTMAN_COMMIT=master
 ARG DYSCO_COMMIT=master
 ARG SAGECAL_COMMIT=master
