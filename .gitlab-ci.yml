@@ -4,7 +4,7 @@ stages:
   - deploy
 
 docker-setup:
-  image: docker:stable
+  image: docker:latest
   services:
     - docker:dind
   variables:
