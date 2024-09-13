@@ -3,7 +3,7 @@ FROM ubuntu:22.04 as builder
 # This Docker image builds the dependencies for the Rapthor pipeline.
 # It lives on the head of its dependencies.
 
-# Install all build-time dependencies
+# Install all build-time dependencies (+pip for debugging)
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y \
@@ -45,15 +45,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 WORKDIR /src
 
 # Build portable binaries by default
-ARG PORTABLE=TRUE
+ARG TARGET_CPU=haswell
 
-ARG LOFARSTMAN_COMMIT=master
+ARG LOFARSTMAN_COMMIT=main
 RUN git clone --no-checkout \
         https://github.com/lofar-astron/LofarStMan && \
     mkdir LofarStMan/build && \
     cd LofarStMan && git checkout ${LOFARSTMAN_COMMIT} && \
     cd build && \
-    cmake .. -DPORTABLE=${PORTABLE} && \
+    cmake .. -DTARGET_CPU=${TARGET_CPU} && \
     make install -j`nproc`
 
 ARG DYSCO_COMMIT=master
@@ -62,7 +62,7 @@ RUN git clone --no-checkout \
     mkdir dysco/build && \
     cd dysco && git checkout ${DYSCO_COMMIT} && \
     cd build && \
-    cmake .. -DPORTABLE=${PORTABLE} && \
+    cmake .. -DTARGET_CPU=${TARGET_CPU} && \
     make install -j`nproc`
 
 ARG IDG_COMMIT=master
@@ -82,7 +82,7 @@ RUN git clone --no-checkout \
     mkdir aoflagger/build && \
     cd aoflagger && git checkout ${AOFLAGGER_COMMIT} && \
     cd build && \
-    cmake .. -DPORTABLE=${PORTABLE} && \
+    cmake .. -DTARGET_CPU=${TARGET_CPU} && \
     make install -j`nproc`
 
 ARG LOFARBEAM_COMMIT=master
@@ -120,7 +120,7 @@ RUN git clone --no-checkout \
     mkdir DP3/build && \
     cd DP3 && git checkout ${DP3_COMMIT} && \
     cd build && \
-    cmake .. -DPORTABLE=${PORTABLE} -DLIBDIRAC_PREFIX=/usr/local/ && \
+    cmake .. -DTARGET_CPU=${TARGET_CPU} -DLIBDIRAC_PREFIX=/usr/local/ && \
     make install -j`nproc`
 
 ARG WSCLEAN_COMMIT=master
@@ -129,7 +129,7 @@ RUN git clone --no-checkout \
     mkdir wsclean/build && \
     cd wsclean && git checkout ${WSCLEAN_COMMIT} && \
     cd build && \
-    cmake .. -DPORTABLE=${PORTABLE} && \
+    cmake .. -DTARGET_CPU=${TARGET_CPU} && \
     make install -j`nproc`
 
 # Do not use `pip` from the Debian repository, but fetch it from PyPA.
@@ -167,7 +167,7 @@ SHELL ["/bin/bash", "-c"]
 
 # Set default versions. Can be overridden from the command-line
 ARG LINC_COMMIT=master
-ARG LOFARSTMAN_COMMIT=master
+ARG LOFARSTMAN_COMMIT=main
 ARG DYSCO_COMMIT=master
 ARG SAGECAL_COMMIT=master
 ARG IDG_COMMIT=master
