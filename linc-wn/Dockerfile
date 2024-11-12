@@ -142,7 +142,7 @@ RUN wget -q https://bootstrap.pypa.io/get-pip.py && \
 # Install required python packages
 RUN python3 -m pip install --no-cache-dir --upgrade \
     nodejs-wheel \
-    toil[all] \
+    toil[cwl] \
     calrissian
 
 # Install current version of LINC. By adding this to the base image
