@@ -3,6 +3,13 @@ FROM gitlab-p4n.aip.de:5005/compute4punch/container-stacks/linc-wn:latest
 RUN python3 -m pip install --no-cache-dir --upgrade \
     calrissian
 
+RUN mkdir /usr/local/share/linc_tests \
+        && git clone --depth 1 --branch master \
+        https://git.astron.nl/RD/LINC.git /tmp/linc \
+        && cp /tmp/linc/test_jobs/* /usr/local/share/linc_tests
+        && rm -rf /tmp/linc
+
+
 # FROM ubuntu:22.04 as builder
 
 # # This Docker image builds the dependencies for the Rapthor pipeline.
