@@ -266,3 +266,9 @@ RUN git clone --depth 1 --branch ${LINC_COMMIT} \
         https://git.astron.nl/RD/LINC.git /tmp/linc && \
         python3 -m pip install --no-cache-dir --upgrade /tmp/linc && \
         rm -rf /tmp/linc
+
+RUN mkdir /usr/local/share/linc_tests \
+        && git clone --depth 1 --branch master \
+        https://git.astron.nl/RD/LINC.git /tmp/linc \
+        && cp /tmp/linc/test_jobs/* /usr/local/share/linc_tests \
+        && rm -rf /tmp/linc
